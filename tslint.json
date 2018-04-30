@@ -5,5 +5,12 @@
       "config/**/*.js",
       "node_modules/**/*.ts"
     ]
+  },
+  "rules": {
+    "semicolon": [true, "never"],
+    "quotemark": [true, "single", "jsx-double"],
+    "member-access": [true, "no-public"],
+    "jsx-boolean-value": false,
+    "no-console": false
   }
 }

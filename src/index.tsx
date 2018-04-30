@@ -1,11 +1,15 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import App from './App';
-import './index.css';
-import registerServiceWorker from './registerServiceWorker';
+import React from 'react'
+import { render } from 'react-dom'
+import registerServiceWorker from './scripts/registerServiceWorker'
+import App from './views/App'
 
-ReactDOM.render(
+import '@mdi/font/css/materialdesignicons.min.css'
+import './semantic/dist/semantic.min.css'
+// tslint:disable-next-line:ordered-imports
+import './index.css'
+
+render(
   <App />,
   document.getElementById('root') as HTMLElement
-);
-registerServiceWorker();
+)
+registerServiceWorker()
