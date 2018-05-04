@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { MAXDICE } from '../constants'
 
 interface IDiceCounterProps {
+	isRolling: boolean
 	value: number
 	changeValue: (n: number) => void
 }
@@ -24,7 +25,8 @@ const DiceCounter: React.SFC<IDiceCounterProps> = props => {
 						primary
 						icon="minus"
 						onClick={minusOne}
-						disabled={disableMinus}
+						disabled={disableMinus || props.isRolling}
+						as="a"
 					/>
 				</CenteredDiv>
 			</SUI.Grid.Column>
@@ -39,7 +41,8 @@ const DiceCounter: React.SFC<IDiceCounterProps> = props => {
 						primary
 						icon="plus"
 						onClick={addOne}
-						disabled={disableAdd}
+						disabled={disableAdd || props.isRolling}
+						as="a"
 					/>
 				</CenteredDiv>
 			</SUI.Grid.Column>

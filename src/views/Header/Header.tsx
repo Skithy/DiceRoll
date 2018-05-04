@@ -8,7 +8,7 @@ const Header: React.SFC = () => (
 	<SUI.Menu inverted fixed="top" color="brown">
 		<SUI.Container>
 			<SUI.Menu.Item header name="header" as={Link} to="/">
-				<i className="mdi mdi-dice-multiple"/> DiceRoll
+				<i className="mdi mdi-dice-3" style={{ marginRight: 5 }}/> DiceRoll
 			</SUI.Menu.Item>
 			<SUI.Menu.Item name="dice" as={Link} to="/dice">
 				Dice

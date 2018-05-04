@@ -5,6 +5,7 @@ import styled from 'styled-components'
 interface IRollButtonProps {
 	onRollClick: () => void
 	onSettingClick: () => void
+	rollDisabled: boolean
 }
 
 const RollButton: React.SFC<IRollButtonProps> = props => (
@@ -12,7 +13,8 @@ const RollButton: React.SFC<IRollButtonProps> = props => (
 		<SUI.Button
 			size="massive"
 			primary
-			onClick={props.onRollClick}>
+			onClick={props.onRollClick}
+			disabled={props.rollDisabled}>
 			Roll
 		</SUI.Button>
 		<SUI.Button

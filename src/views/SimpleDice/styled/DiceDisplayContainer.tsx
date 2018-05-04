@@ -8,5 +8,6 @@ const DiceDisplayContainer = styled('div') `
 	justify-content: center;
 	padding: 10vh 20px;
 	position: relative;
+	touch-action: none;
 `
 export default DiceDisplayContainer

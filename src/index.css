@@ -1,6 +1,13 @@
 html,body {
   overflow: hidden;
-  background-color: #DCD0C0;
+  /* background-color: #DCD0C0; */
+  background: repeating-linear-gradient(
+    45deg,
+    #FCEBD3,
+    #FCEBD3 80px,
+    #F4E4D4 80px,
+    #F4E4D4 160px
+  );
   color: #373737;
 }
 .ui.page.modals.transition.visible {
