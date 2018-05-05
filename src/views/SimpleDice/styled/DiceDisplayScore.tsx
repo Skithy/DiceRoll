@@ -1,8 +1,8 @@
-import * as SUI from 'semantic-ui-react'
+import { Header, HeaderProps } from 'semantic-ui-react'
 import styled, { StyledComponentClass } from 'styled-components'
 
-const DiceDisplayScore = styled(SUI.Header) `
+const DiceDisplayScore = styled(Header) `
 	position: absolute;
 	bottom: 0px;
-` as StyledComponentClass<SUI.HeaderProps, {}>
+` as StyledComponentClass<HeaderProps, {}>
 export default DiceDisplayScore

@@ -1,5 +1,5 @@
 import React from 'react'
-import * as SUI from 'semantic-ui-react'
+import { Button } from 'semantic-ui-react'
 import styled from 'styled-components'
 
 interface IRollButtonProps {
@@ -10,14 +10,14 @@ interface IRollButtonProps {
 
 const RollButton: React.SFC<IRollButtonProps> = props => (
 	<RollButtonContainer>
-		<SUI.Button
+		<Button
 			size="massive"
 			primary
 			onClick={props.onRollClick}
 			disabled={props.rollDisabled}>
 			Roll
-		</SUI.Button>
-		<SUI.Button
+		</Button>
+		<Button
 			style={{ marginLeft: 10 }}
 			circular
 			icon="setting"

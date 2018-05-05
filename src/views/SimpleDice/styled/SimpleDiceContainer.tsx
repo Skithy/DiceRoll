@@ -1,7 +1,7 @@
-import * as SUI from 'semantic-ui-react'
+import { Container } from 'semantic-ui-react'
 import styled from 'styled-components'
 
-const SimpleDiceContainer = styled(SUI.Container)`
+const SimpleDiceContainer = styled(Container)`
 	display: block;
 `
 export default SimpleDiceContainer

@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@mdi/font": "^2.3.54",
     "@types/react-router-dom": "^4.2.6",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",

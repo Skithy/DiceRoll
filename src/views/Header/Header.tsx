@@ -1,25 +1,25 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import * as SUI from 'semantic-ui-react'
+import { Container, Menu, } from 'semantic-ui-react'
 
 // Sidebar if mobile, header if desktop
 // window.innerWidth
 const Header: React.SFC = () => (
-	<SUI.Menu inverted fixed="top" color="brown">
-		<SUI.Container>
-			<SUI.Menu.Item header name="header" as={Link} to="/">
+	<Menu inverted fixed="top" color="brown">
+		<Container>
+			<Menu.Item header name="header" as={Link} to="/">
 				<i className="mdi mdi-dice-3" style={{ marginRight: 5 }}/> DiceRoll
-			</SUI.Menu.Item>
-			<SUI.Menu.Item name="dice" as={Link} to="/dice">
+			</Menu.Item>
+			<Menu.Item name="dice" as={Link} to="/dice">
 				Dice
-			</SUI.Menu.Item>
-			<SUI.Menu.Item name="coin" as={Link} to="/coin">
+			</Menu.Item>
+			<Menu.Item name="coin" as={Link} to="/coin">
 				Coin
-			</SUI.Menu.Item>
-			<SUI.Menu.Item name="adv" as={Link} to="/advanced">
+			</Menu.Item>
+			<Menu.Item name="adv" as={Link} to="/advanced">
 				Advanced Dice
-			</SUI.Menu.Item>
-		</SUI.Container>
-	</SUI.Menu>
+			</Menu.Item>
+		</Container>
+	</Menu>
 )
 export default Header

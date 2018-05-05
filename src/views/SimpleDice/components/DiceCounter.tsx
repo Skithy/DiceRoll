@@ -1,5 +1,5 @@
 import React from 'react'
-import * as SUI from 'semantic-ui-react'
+import { Button, Grid, Header, } from 'semantic-ui-react'
 import styled from 'styled-components'
 import { MAXDICE } from '../constants'
 
@@ -18,10 +18,10 @@ const DiceCounter: React.SFC<IDiceCounterProps> = props => {
 	const disableMinus = value <= 1
 
 	return (
-		<SUI.Grid columns="equal">
-			<SUI.Grid.Column>
+		<Grid columns="equal">
+			<Grid.Column>
 				<CenteredDiv>
-					<SUI.Button
+					<Button
 						primary
 						icon="minus"
 						onClick={minusOne}
@@ -29,15 +29,15 @@ const DiceCounter: React.SFC<IDiceCounterProps> = props => {
 						as="a"
 					/>
 				</CenteredDiv>
-			</SUI.Grid.Column>
-			<SUI.Grid.Column width={8}>
+			</Grid.Column>
+			<Grid.Column width={8}>
 				<CenteredDiv>
-					<SUI.Header as="h1">{value}</SUI.Header>
+					<Header as="h1">{value}</Header>
 				</CenteredDiv>
-			</SUI.Grid.Column>
-			<SUI.Grid.Column>
+			</Grid.Column>
+			<Grid.Column>
 				<CenteredDiv>
-					<SUI.Button
+					<Button
 						primary
 						icon="plus"
 						onClick={addOne}
@@ -45,8 +45,8 @@ const DiceCounter: React.SFC<IDiceCounterProps> = props => {
 						as="a"
 					/>
 				</CenteredDiv>
-			</SUI.Grid.Column>
-		</SUI.Grid>
+			</Grid.Column>
+		</Grid>
 	)
 }
 export default DiceCounter

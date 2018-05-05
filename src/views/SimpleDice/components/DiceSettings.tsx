@@ -1,5 +1,5 @@
 import React from 'react'
-import * as SUI from 'semantic-ui-react'
+import { Button, Checkbox, Form, Modal } from 'semantic-ui-react'
 import { ISettings } from '../SimpleDice'
 
 interface IDiceSettingsProps {
@@ -24,46 +24,46 @@ export default class DiceSettings extends React.PureComponent<IDiceSettingsProps
 		const { isOpen, closeSettings, } = this.props
 		const { shakeEvents, keyboardCommands, animations } = this.state
 		return (
-			<SUI.Modal dimmer="inverted" open={isOpen} onClose={closeSettings}>
-				<SUI.Modal.Header>Settings</SUI.Modal.Header>
-				<SUI.Modal.Content>
-					<SUI.Form>
-						<SUI.Form.Field>
-							<SUI.Checkbox toggle
+			<Modal dimmer="inverted" open={isOpen} onClose={closeSettings}>
+				<Modal.Header>Settings</Modal.Header>
+				<Modal.Content>
+					<Form>
+						<Form.Field>
+							<Checkbox toggle
 								checked={shakeEvents}
 								onChange={this.toggleShake}
 								label="Shake to Roll (mobile)"
 							/>
-						</SUI.Form.Field>
-						<SUI.Form.Field>
-							<SUI.Checkbox toggle
+						</Form.Field>
+						<Form.Field>
+							<Checkbox toggle
 								checked={keyboardCommands}
 								onChange={this.toggleKeyboard}
 								label="Keyboard Commands (Space to Roll, - + to Change Dice)"
 							/>
-						</SUI.Form.Field>
-						<SUI.Form.Field>
-							<SUI.Checkbox toggle
+						</Form.Field>
+						<Form.Field>
+							<Checkbox toggle
 								checked={animations}
 								onChange={this.toggleAnimations}
 								label="Animations"
 							/>
-						</SUI.Form.Field>
-					</SUI.Form>
-				</SUI.Modal.Content>
-				<SUI.Modal.Actions>
-					<SUI.Button primary onClick={closeSettings}>
+						</Form.Field>
+					</Form>
+				</Modal.Content>
+				<Modal.Actions>
+					<Button primary onClick={closeSettings}>
 						Cancel
-					</SUI.Button>
-					<SUI.Button
+					</Button>
+					<Button
 						positive
 						icon="checkmark"
 						labelPosition="right"
 						content="Save Settings"
 						onClick={this.saveSettings}
 					/>
-				</SUI.Modal.Actions>
-			</SUI.Modal>
+				</Modal.Actions>
+			</Modal>
 		)
 	}
 }
