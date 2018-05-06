@@ -1,6 +1,4 @@
-html,body {
-  overflow: hidden;
-  /* background-color: #DCD0C0; */
+html {
   background: repeating-linear-gradient(
     45deg,
     #FCEBD3,
@@ -10,6 +8,36 @@ html,body {
   );
   color: #373737;
 }
+
+body {
+  height: auto;
+  background-color: transparent;
+  color: inherit;
+}
+
 .ui.page.modals.transition.visible {
-    display: flex !important;
+  display: flex !important;
+}
+
+.ui.inverted.brown.menu,
+.ui.primary.button {
+  background-color: #373737;
+}
+
+.ui.primary.button:focus {
+  background-color: #232323;
+}
+
+.ui.primary.button:hover {
+  background-color: #2a2a2a;
+}
+
+.ui.toggle.checkbox input:focus:checked~.box:before,
+.ui.toggle.checkbox input:focus:checked~label:before {
+  background-color: #373737 !important
+}
+
+.ui.toggle.checkbox input:checked ~ .box:before,
+.ui.toggle.checkbox input:checked ~ label:before {
+  background-color: #373737 !important;
 }

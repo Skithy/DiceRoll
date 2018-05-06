@@ -18,13 +18,10 @@ interface ISimpleDiceState {
 	diceSet: number[]
 	hasRolled: boolean
 	isRolling: boolean
-	rollingAngle: number
 	settingsOpen: boolean
 	settings: ISettings
 }
 // TODO:
-// textbox to change value
-// Add history
 // https://www.critdice.com/how-to-roll-dice/
 // Save dice combos
 
@@ -39,7 +36,6 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 		diceSet: [1],
 		hasRolled: false,
 		isRolling: false,
-		rollingAngle: 0,
 		settings: {
 			animations: true,
 			keyboardCommands: true,
@@ -85,31 +81,17 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 		}
 	}
 
-	rollDiceSet = (): void => this.setState({ diceSet: rollDiceSet(this.state.diceSet, 6) })
-
 	startRoll = (): void => {
 		if (this.state.settingsOpen || this.state.isRolling) {
 			return
 		}
 		
+		this.setState({ diceSet: rollDiceSet(this.state.diceSet, 6), hasRolled: true })
 		if (this.state.settings.animations) {
-			this.setState({ isRolling: true, hasRolled: true }, () => {
-				const animation = setInterval(this.animateRoll, 60)
-				setTimeout(() => {
-					clearInterval(animation)
-					this.setState({ isRolling: false, rollingAngle: 0 })
-				}, 600)
+			this.setState({ isRolling: true, }, () => {
+				setTimeout(() => this.setState({ isRolling: false }), 600)
 			})
-		} else {
-			this.rollDiceSet()
 		}
-	}
-
-	animateRoll = (): void => {
-		this.setState({
-			diceSet: rollDiceSet(this.state.diceSet, 6),
-			rollingAngle: this.state.rollingAngle === 10 ? -10 : 10
-		})
 	}
 
 	openSettings = () => this.setState({ settingsOpen: true })
@@ -117,7 +99,7 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 	saveSettings = (settings: ISettings) => this.setState({ settingsOpen: false, settings })
 
 	render() {
-		const { diceSet, settingsOpen, hasRolled, isRolling, rollingAngle, settings } = this.state
+		const { diceSet, settingsOpen, hasRolled, isRolling, settings } = this.state
 		return (
 			<SimpleDiceContainer>
 				<DiceCounter
@@ -127,8 +109,8 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 				/>
 				<DiceDisplay
 					diceSet={diceSet}
-					showSum={hasRolled && !isRolling}
-					rollingAngle={rollingAngle}
+					hasRolled={hasRolled}
+					isRolling={isRolling}
 				/>
 				<RollButton
 					onRollClick={this.startRoll}

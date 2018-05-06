@@ -1,26 +1,40 @@
 import React from 'react'
+import styled from 'styled-components'
+import { rollDiceSet } from '../functions'
 import DiceDisplayContainer from '../styled/DiceDisplayContainer'
 import DiceDisplayScore from '../styled/DiceDisplayScore'
 import DiceIcon from '../styled/DiceIcon'
 
 interface IDiceDisplayProps {
 	diceSet: number[]
-	showSum: boolean
-	rollingAngle: number
+	hasRolled: boolean
+	isRolling: boolean
 }
 
 interface IDiceDisplayState {
+	animationInterval?: NodeJS.Timer
 	height: number
 	width: number
 	size: number
 	cols: number
+	diceSet: number[]
+	shakeAngle: number
+	shakeIntensity: number
+	shakeRight: boolean
+	shakeSpeed: number
 }
 
 class DiceDisplay extends React.PureComponent<IDiceDisplayProps, IDiceDisplayState> {
 	ref: any
 	state = {
+		animationInterval: undefined,
 		cols: 0,
+		diceSet: this.props.diceSet,
 		height: 0,
+		shakeAngle: 0,
+		shakeIntensity: 15,
+		shakeRight: true,
+		shakeSpeed: 100,
 		size: 0,
 		width: 0,
 	}
@@ -30,20 +44,27 @@ class DiceDisplay extends React.PureComponent<IDiceDisplayProps, IDiceDisplaySta
 		window.addEventListener('resize', this.setDimensions)
 	}
 
+	componentWillUnmount() {
+		window.removeEventListener('resize', this.setDimensions)
+	}
+
 	componentDidUpdate(prevProps: IDiceDisplayProps) {
 		if (prevProps.diceSet.length !== this.props.diceSet.length) {
 			const { height, width } = this.state
 			const { size, cols } = this.calculateSize(this.props.diceSet.length, height, width)
-			this.setState({ size, cols })
+			this.setState({ size, cols, diceSet: this.props.diceSet, shakeAngle: 0 })
+		}
+
+		if (prevProps.isRolling !== this.props.isRolling) {
+			if (this.props.isRolling) {
+				this.setState({ animationInterval: setInterval(this.animate, this.state.shakeSpeed) })
+			} else {
+				clearInterval(this.state.animationInterval)
+				this.setState({ animationInterval: undefined })
+			}
 		}
 	}
 
-	componentWillUnmount() {
-		window.removeEventListener('resize', this.setDimensions)		
-	}
-
-	getRef = (ref: any): void => this.ref = ref
-	
 	setDimensions = (): void => {
 		const paddingLeft = parseFloat(getComputedStyle(this.ref).paddingLeft || '0')
 		const paddingTop = parseFloat(getComputedStyle(this.ref).paddingTop || '0')
@@ -76,10 +97,33 @@ class DiceDisplay extends React.PureComponent<IDiceDisplayProps, IDiceDisplaySta
 		return { size: 0, cols: 0 }
 	}
 
+	animate = (): void => {
+		const { diceSet, shakeAngle, shakeIntensity, shakeRight, } = this.state
+		const r = shakeRight ? shakeAngle + shakeIntensity : shakeAngle - shakeIntensity
+		this.setState({
+			diceSet: rollDiceSet(diceSet, 6),
+			shakeAngle: r,
+		})
+
+		if (r === shakeIntensity) {
+			this.setState({ shakeRight: false })
+		}
+		if (r === -shakeIntensity) {
+			this.setState({ shakeRight: true })
+		}
+		// const { shakeAngle, shakeIntensity } = this.state
+		// this.setState({
+		// 	diceSet: rollDiceSet(this.props.diceSet, 6),
+		// 	shakeAngle: shakeAngle === shakeIntensity ? -shakeIntensity : shakeIntensity,
+		// })
+	}
+
 	render() {
-		const { diceSet, showSum, rollingAngle } = this.props
-		const { size, cols } = this.state
-		const diceRows: number[][] = diceSet.reduce((total, val) => {
+		const { hasRolled, isRolling } = this.props
+		const { size, cols, shakeAngle } = this.state
+
+		const renderedDice = isRolling ? this.state.diceSet : this.props.diceSet
+		const diceRows: number[][] = renderedDice.reduce((total, val) => {
 			if (total[total.length - 1].length < cols) {
 				total[total.length - 1].push(val)
 			} else {
@@ -88,21 +132,19 @@ class DiceDisplay extends React.PureComponent<IDiceDisplayProps, IDiceDisplaySta
 			return total
 		}, [[]] as number[][])
 
+		const getRef = (ref: any): void => this.ref = ref
+
 		return (
-			<DiceDisplayContainer innerRef={this.getRef}>
-				{ showSum &&
-					<DiceDisplayScore as="h1">{diceSet.reduce((total, val) => total + val)}</DiceDisplayScore>
+			<DiceDisplayContainer innerRef={getRef}>
+				{ hasRolled && !isRolling &&
+					<DiceDisplayScore as="h1">{renderedDice.reduce((total, val) => total + val)}</DiceDisplayScore>
 				}
 				{ diceRows.map((row, i) => (
 					<div key={i}>
 						{ row.map((d, j) => (
-							<div key={i * cols + j}
-								style={{ display: 'inline-flex', transform: `rotate(${rollingAngle}deg)` }}>
-								<DiceIcon
-									size={size}
-									className={getDiceIconClass(d)}
-								/>
-							</div>
+							<DiceIconWrapper key={i * cols + j} rotation={isRolling ? shakeAngle : 0}>
+								<DiceIcon size={size} className={`mdi mdi-dice-${d}`} />
+							</DiceIconWrapper>
 						))}
 					</div>
 				))}
@@ -113,4 +155,11 @@ class DiceDisplay extends React.PureComponent<IDiceDisplayProps, IDiceDisplaySta
 
 export default DiceDisplay
 
-const getDiceIconClass = (num: number) => `mdi mdi-dice-${num}`
+
+interface IDiceIconWrapperProps {
+	rotation: number
+}
+const DiceIconWrapper = styled.div`
+	display: inline-flex;
+	transform: rotate(${(props: IDiceIconWrapperProps) => props.rotation}deg);
+`
