@@ -5,10 +5,11 @@ import { rollDiceSet } from '../functions'
 interface IDiceDisplayProps {
 	diceSet: number[]
 	isRolling: boolean
+	animationDuration: number
+	onAnimationEnd: () => void
 }
 
 interface IDiceDisplayState {
-	animationInterval?: NodeJS.Timer
 	height: number
 	width: number
 	size: number
@@ -16,21 +17,20 @@ interface IDiceDisplayState {
 	diceSet: number[]
 	shakeAngle: number
 	shakeIntensity: number
-	shakeRight: boolean
 	shakeSpeed: number
+	animationDuration: number
 }
 
 export default class DiceDisplay extends React.PureComponent<IDiceDisplayProps, IDiceDisplayState> {
 	ref: any
 	state = {
-		animationInterval: undefined,
+		animationDuration: 0,
 		cols: 0,
 		diceSet: this.props.diceSet,
 		height: 0,
 		shakeAngle: 0,
-		shakeIntensity: 15,
-		shakeRight: true,
-		shakeSpeed: 100,
+		shakeIntensity: 20,
+		shakeSpeed: 150,
 		size: 0,
 		width: 0,
 	}
@@ -49,15 +49,12 @@ export default class DiceDisplay extends React.PureComponent<IDiceDisplayProps, 
 			const { height, width } = this.state
 			const { size, cols } = this.calculateSize(this.props.diceSet.length, height, width)
 			this.setState({ size, cols, diceSet: this.props.diceSet, shakeAngle: 0 })
+		} else if (prevProps.diceSet !== this.props.diceSet) {
+			this.setState({ diceSet: this.props.diceSet })
 		}
 
-		if (prevProps.isRolling !== this.props.isRolling) {
-			if (this.props.isRolling) {
-				this.setState({ animationInterval: setInterval(this.animate, this.state.shakeSpeed) })
-			} else {
-				clearInterval(this.state.animationInterval)
-				this.setState({ animationInterval: undefined })
-			}
+		if (prevProps.isRolling !== this.props.isRolling && this.props.isRolling) {
+			this.setState({ shakeAngle: this.state.shakeIntensity })
 		}
 	}
 
@@ -93,35 +90,36 @@ export default class DiceDisplay extends React.PureComponent<IDiceDisplayProps, 
 		return { size: 0, cols: 0 }
 	}
 
-	animate = (): void => {
-		const { diceSet, shakeAngle, shakeIntensity, shakeRight, } = this.state
-		const r = shakeRight ? shakeAngle + shakeIntensity : shakeAngle - shakeIntensity
-		this.setState({
-			diceSet: rollDiceSet(diceSet, 6),
-			shakeAngle: r,
-		})
+	animate = (time: number): void => {
+		if (this.state.shakeAngle === 0) {
+			this.props.onAnimationEnd()
+			return
+		}
 
-		if (r === shakeIntensity) {
-			this.setState({ shakeRight: false })
+		const duration = this.state.animationDuration + time
+		if (duration > this.props.animationDuration) {
+			this.setState({
+				animationDuration: 0,
+				diceSet: this.props.diceSet,
+				shakeAngle: 0,
+			})
+			return
 		}
-		if (r === -shakeIntensity) {
-			this.setState({ shakeRight: true })
-		}
-		// const { shakeAngle, shakeIntensity } = this.state
-		// this.setState({
-		// 	diceSet: rollDiceSet(this.props.diceSet, 6),
-		// 	shakeAngle: shakeAngle === shakeIntensity ? -shakeIntensity : shakeIntensity,
-		// })
+
+		const { diceSet, shakeAngle, shakeIntensity } = this.state
+		this.setState({
+			animationDuration: duration,
+			diceSet: rollDiceSet(diceSet, 6),
+			shakeAngle: shakeAngle === shakeIntensity ? -shakeIntensity : shakeIntensity,
+		})
 	}
 
 	getRef = (ref: any): void => this.ref = ref
 
 	render() {
-		const { isRolling } = this.props
-		const { size, cols, shakeAngle } = this.state
+		const { diceSet, size, cols, shakeAngle, shakeSpeed } = this.state
 
-		const renderedDice = isRolling ? this.state.diceSet : this.props.diceSet
-		const diceRows: number[][] = renderedDice.reduce((total, val) => {
+		const diceRows: number[][] = diceSet.reduce((total, val) => {
 			if (total[total.length - 1].length < cols) {
 				total[total.length - 1].push(val)
 			} else {
@@ -135,7 +133,12 @@ export default class DiceDisplay extends React.PureComponent<IDiceDisplayProps, 
 				{ diceRows.map((row, i) => (
 					<div key={i}>
 						{ row.map((d, j) => (
-							<StyledIconWrapper key={i * cols + j} rotation={isRolling ? shakeAngle : 0}>
+								<StyledIconWrapper
+								key={i * cols + j}
+								rotation={shakeAngle}
+								duration={shakeSpeed}
+								onTransitionEnd={(e) => (i * cols + j) === 0 && this.animate(e.elapsedTime * 1000)}
+							>
 								<StyledDiceIcon size={size} className={`mdi mdi-dice-${d}`} />
 							</StyledIconWrapper>
 						))}
@@ -156,10 +159,12 @@ const StyledContainer = styled.div`
 `
 interface IStyledIconWrapperProps {
 	rotation: number
+	duration: number
 }
 const StyledIconWrapper = styled.div`
 	display: inline-flex;
 	transform: rotate(${(props: IStyledIconWrapperProps) => props.rotation}deg);
+	transition: transform cubic-bezier(0.785, 0.135, 0.15, 0.86) ${(props: IStyledIconWrapperProps) => props.duration}ms;
 `
 
 interface IStyledDiceIconProps {

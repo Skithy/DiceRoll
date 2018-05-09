@@ -49,14 +49,14 @@ const StyledContainer = styled.div`
 `
 
 const StyledMinusButton = styled(Button)`
-	margin-right: 2em !important;
-	background-color: darkred !important;
+	margin-right: 1em !important;
+	background-color: #382633 !important;
 ` as StyledComponentClass<ButtonProps, {}>
 
 const StyledAddButton = styled(Button) `
-	margin-left: 2em !important;
+	margin-left: 1em !important;
 	margin-right: 0 !important;
-	background-color: darkgreen !important;
+	background-color: #36453C !important;
 ` as StyledComponentClass<ButtonProps, {}>
 
 const StyledRollButton = styled(Button) `

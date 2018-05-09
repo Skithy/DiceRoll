@@ -55,7 +55,7 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 	}
 
 	changeValue = (n: number): void => {
-		if (n >= 1 && n <= MAXDICE) {
+		if (n >= 1 && n <= MAXDICE && !this.state.isRolling) {
 			this.setState({ diceSet: newDiceSet(n), hasRolled: false })
 		}
 	}
@@ -86,13 +86,13 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 			return
 		}
 		
-		this.setState({ diceSet: rollDiceSet(this.state.diceSet, 6), hasRolled: true })
-		if (this.state.settings.animations) {
-			this.setState({ isRolling: true, }, () => {
-				setTimeout(() => this.setState({ isRolling: false }), 600)
-			})
-		}
+		this.setState({
+			diceSet: rollDiceSet(this.state.diceSet, 6),
+			hasRolled: true,
+			isRolling: this.state.settings.animations,
+		})
 	}
+	onAnimationEnd = () => this.setState({ isRolling: false })
 
 	openSettings = () => this.setState({ settingsOpen: true })
 	closeSettings = () => this.setState({ settingsOpen: false })
@@ -101,7 +101,7 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 	render() {
 		const { diceSet, settingsOpen, isRolling, settings, hasRolled } = this.state
 		return (
-			<StyledSimpleDiceContainer>
+			<StyledContainer>
 				<StyledSettingsButton
 					circular
 					icon="setting"
@@ -109,8 +109,10 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 					onClick={this.openSettings}
 				/>
 				<DiceDisplay
+					animationDuration={600}
 					diceSet={diceSet}
 					isRolling={isRolling}
+					onAnimationEnd={this.onAnimationEnd}
 				/>
 				<DiceSumDisplay
 					sum={diceSet.reduce((total, val) => total + val)}
@@ -130,12 +132,12 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 					closeSettings={this.closeSettings}
 					saveSettings={this.saveSettings}
 				/>
-			</StyledSimpleDiceContainer>
+			</StyledContainer>
 		)
 	}
 }
 
-const StyledSimpleDiceContainer = styled(Container) `
+const StyledContainer = styled(Container) `
 	display: flex;
 	flex-direction: column;
 	position: relative;

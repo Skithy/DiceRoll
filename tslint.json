@@ -11,6 +11,7 @@
     "quotemark": [true, "single", "jsx-double"],
     "member-access": [true, "no-public"],
     "jsx-boolean-value": false,
-    "no-console": false
+    "no-console": false,
+    "jsx-no-lambda": false
   }
 }
