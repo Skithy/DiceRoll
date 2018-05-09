@@ -1,12 +1,13 @@
 import React from 'react'
+import { Button, ButtonProps, Container } from 'semantic-ui-react'
 import Shake from 'shake.js'
-import DiceCounter from './components/DiceCounter'
+import styled, { StyledComponentClass } from 'styled-components'
 import DiceDisplay from './components/DiceDisplay'
 import DiceSettings from './components/DiceSettings'
-import RollButton from './components/RollButton'
+import DiceSumDisplay from './components/DiceSumDisplay'
+import RollButtonRow from './components/RollButtonRow'
 import { MAXDICE } from './constants'
 import { newDiceSet, rollDiceSet } from './functions'
-import SimpleDiceContainer from './styled/SimpleDiceContainer'
 
 export interface ISettings {
 	keyboardCommands: boolean
@@ -21,9 +22,6 @@ interface ISimpleDiceState {
 	settingsOpen: boolean
 	settings: ISettings
 }
-// TODO:
-// https://www.critdice.com/how-to-roll-dice/
-// Save dice combos
 
 export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState> {
 	ref: any
@@ -61,6 +59,8 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 			this.setState({ diceSet: newDiceSet(n), hasRolled: false })
 		}
 	}
+	addValue = (): void => this.changeValue(this.state.diceSet.length + 1)
+	minusValue = (): void => this.changeValue(this.state.diceSet.length - 1)
 
 	handleKeyPress = (e: KeyboardEvent): void => {
 		if (this.state.settings.keyboardCommands) {
@@ -68,9 +68,9 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 				case ' ':
 					return this.startRoll()
 				case '-':
-					return this.changeValue(this.state.diceSet.length - 1)
+					return this.minusValue()
 				case '=':
-					return this.changeValue(this.state.diceSet.length + 1)
+					return this.addValue()
 			}
 		}
 	}
@@ -99,23 +99,30 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 	saveSettings = (settings: ISettings) => this.setState({ settingsOpen: false, settings })
 
 	render() {
-		const { diceSet, settingsOpen, hasRolled, isRolling, settings } = this.state
+		const { diceSet, settingsOpen, isRolling, settings, hasRolled } = this.state
 		return (
-			<SimpleDiceContainer>
-				<DiceCounter
-					value={diceSet.length}
-					isRolling={isRolling}
-					changeValue={this.changeValue}
+			<StyledSimpleDiceContainer>
+				<StyledSettingsButton
+					circular
+					icon="setting"
+					primary
+					onClick={this.openSettings}
 				/>
 				<DiceDisplay
 					diceSet={diceSet}
-					hasRolled={hasRolled}
 					isRolling={isRolling}
 				/>
-				<RollButton
-					onRollClick={this.startRoll}
-					onSettingClick={this.openSettings}
+				<DiceSumDisplay
+					sum={diceSet.reduce((total, val) => total + val)}
+					show={hasRolled && !isRolling}
+				/>
+				<RollButtonRow
+					minusDisabled={isRolling || diceSet.length <= 1}
+					addDisabled={isRolling || diceSet.length >= MAXDICE}
 					rollDisabled={isRolling}
+					onAdd={this.addValue}
+					onMinus={this.minusValue}
+					onRollClick={this.startRoll}
 				/>
 				<DiceSettings
 					isOpen={settingsOpen}
@@ -123,7 +130,19 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 					closeSettings={this.closeSettings}
 					saveSettings={this.saveSettings}
 				/>
-			</SimpleDiceContainer>
+			</StyledSimpleDiceContainer>
 		)
 	}
 }
+
+const StyledSimpleDiceContainer = styled(Container) `
+	display: flex;
+	flex-direction: column;
+	position: relative;
+`
+
+const StyledSettingsButton = styled(Button)`
+	position: absolute;
+	right: 0;
+	z-index: 1;
+` as StyledComponentClass<ButtonProps, {}>

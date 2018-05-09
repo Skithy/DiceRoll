@@ -1,13 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
 import { rollDiceSet } from '../functions'
-import DiceDisplayContainer from '../styled/DiceDisplayContainer'
-import DiceDisplayScore from '../styled/DiceDisplayScore'
-import DiceIcon from '../styled/DiceIcon'
 
 interface IDiceDisplayProps {
 	diceSet: number[]
-	hasRolled: boolean
 	isRolling: boolean
 }
 
@@ -24,7 +20,7 @@ interface IDiceDisplayState {
 	shakeSpeed: number
 }
 
-class DiceDisplay extends React.PureComponent<IDiceDisplayProps, IDiceDisplayState> {
+export default class DiceDisplay extends React.PureComponent<IDiceDisplayProps, IDiceDisplayState> {
 	ref: any
 	state = {
 		animationInterval: undefined,
@@ -118,8 +114,10 @@ class DiceDisplay extends React.PureComponent<IDiceDisplayProps, IDiceDisplaySta
 		// })
 	}
 
+	getRef = (ref: any): void => this.ref = ref
+
 	render() {
-		const { hasRolled, isRolling } = this.props
+		const { isRolling } = this.props
 		const { size, cols, shakeAngle } = this.state
 
 		const renderedDice = isRolling ? this.state.diceSet : this.props.diceSet
@@ -132,34 +130,42 @@ class DiceDisplay extends React.PureComponent<IDiceDisplayProps, IDiceDisplaySta
 			return total
 		}, [[]] as number[][])
 
-		const getRef = (ref: any): void => this.ref = ref
-
 		return (
-			<DiceDisplayContainer innerRef={getRef}>
-				{ hasRolled && !isRolling &&
-					<DiceDisplayScore as="h1">{renderedDice.reduce((total, val) => total + val)}</DiceDisplayScore>
-				}
+			<StyledContainer innerRef={this.getRef}>
 				{ diceRows.map((row, i) => (
 					<div key={i}>
 						{ row.map((d, j) => (
-							<DiceIconWrapper key={i * cols + j} rotation={isRolling ? shakeAngle : 0}>
-								<DiceIcon size={size} className={`mdi mdi-dice-${d}`} />
-							</DiceIconWrapper>
+							<StyledIconWrapper key={i * cols + j} rotation={isRolling ? shakeAngle : 0}>
+								<StyledDiceIcon size={size} className={`mdi mdi-dice-${d}`} />
+							</StyledIconWrapper>
 						))}
 					</div>
 				))}
-			</DiceDisplayContainer>
+			</StyledContainer>
 		)
 	}
 }
 
-export default DiceDisplay
-
-
-interface IDiceIconWrapperProps {
+const StyledContainer = styled.div`
+	height: 50vh;
+	display: flex;
+	flex-direction: column-reverse;
+	align-items: center;
+	justify-content: center;
+	padding: 10vh 20px;
+`
+interface IStyledIconWrapperProps {
 	rotation: number
 }
-const DiceIconWrapper = styled.div`
+const StyledIconWrapper = styled.div`
 	display: inline-flex;
-	transform: rotate(${(props: IDiceIconWrapperProps) => props.rotation}deg);
+	transform: rotate(${(props: IStyledIconWrapperProps) => props.rotation}deg);
+`
+
+interface IStyledDiceIconProps {
+	size: number
+}
+const StyledDiceIcon = styled.i`
+	font-size: ${(props: IStyledDiceIconProps) => props.size}px;
+	line-height: ${(props: IStyledDiceIconProps) => props.size}px;
 `
