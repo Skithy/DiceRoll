@@ -10,15 +10,12 @@ const Header: React.SFC = () => (
 			<Menu.Item header name="header" as={Link} to="/">
 				<i className="mdi mdi-dice-3" style={{ marginRight: 5 }}/> DiceRoll
 			</Menu.Item>
-			<Menu.Item name="dice" as={Link} to="/dice">
-				Dice
-			</Menu.Item>
 			<Menu.Item name="coin" as={Link} to="/coin">
 				Coin
 			</Menu.Item>
-			<Menu.Item name="adv" as={Link} to="/advanced">
+			{/* <Menu.Item name="adv" as={Link} to="/advanced">
 				Advanced Dice
-			</Menu.Item>
+			</Menu.Item> */}
 		</Container>
 	</Menu>
 )

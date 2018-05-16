@@ -1,4 +1,4 @@
-import React from 'react'
+	import React from 'react'
 import styled from 'styled-components'
 
 interface ICoinDisplayProps {
@@ -14,11 +14,11 @@ interface ICoinDisplayState {
 
 export default class CoinDisplay extends React.PureComponent<ICoinDisplayProps, ICoinDisplayState> {
 	state = {
-		rotationAngle: 0
+		rotationAngle: this.props.isHeads ? 0 : 180
 	}
 
 	componentDidUpdate(prevProps: ICoinDisplayProps) {
-		if (prevProps.isAnimating !== this.props.isAnimating && this.props.isAnimating) {
+		if (this.props.isAnimating && prevProps.isAnimating !== this.props.isAnimating) {
 			const { rotationAngle } = this.state
 			let	newAngle = (rotationAngle === 0 || rotationAngle === 180) ? (360 * 3) : 0
 			if (!this.props.isHeads) {
@@ -75,6 +75,11 @@ const StyledCoin = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
+
+	> h1 {
+		font-size: 3em;
+		user-select: none;
+	}
 `
 const StyledCoinHeads = styled(StyledCoin)`
 	background-color: #5D7968;
@@ -82,7 +87,6 @@ const StyledCoinHeads = styled(StyledCoin)`
 
 	> h1 {
 		color: #36453C;
-		font-size: 3em;
 	}
 `
 const StyledCoinTails = styled(StyledCoin)`
@@ -92,6 +96,5 @@ const StyledCoinTails = styled(StyledCoin)`
 	
 	> h1 {
 		color: #4A3945;
-		font-size: 3em;
 	}
 `

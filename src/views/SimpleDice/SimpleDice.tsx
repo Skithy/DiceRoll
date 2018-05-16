@@ -1,7 +1,8 @@
 import React from 'react'
-import { Button, ButtonProps, Container } from 'semantic-ui-react'
+import { get, set } from 'scripts/store'
 import Shake from 'shake.js'
-import styled, { StyledComponentClass } from 'styled-components'
+import { FlexContainer } from '../common/FlexContainer'
+import SettingsButton from '../common/SettingsButton'
 import DiceDisplay from './components/DiceDisplay'
 import DiceSettings from './components/DiceSettings'
 import DiceSumDisplay from './components/DiceSumDisplay'
@@ -31,16 +32,16 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 	})
 
 	state = {
-		diceSet: [1],
-		hasRolled: false,
+		diceSet: get('simpledice_diceSet') || [1],
+		hasRolled: get('simpledice_hasRolled') || false,
 		isRolling: false,
-		settings: {
+		settings: get('simpledice_settings') || {
 			animations: true,
 			keyboardCommands: true,
 			shakeEvents: true,
 		},
 		settingsOpen: false,
-	}
+	} as ISimpleDiceState
 
 	componentDidMount() {
 		this.shakeEvent.start()
@@ -52,6 +53,8 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 		this.shakeEvent.stop()
 		window.removeEventListener('shake', this.handleShake)
 		window.removeEventListener('keypress', this.handleKeyPress)
+		set('simpledice_diceSet', this.state.diceSet)
+		set('simpledice_hasRolled', this.state.hasRolled)
 	}
 
 	changeValue = (n: number): void => {
@@ -96,18 +99,16 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 
 	openSettings = () => this.setState({ settingsOpen: true })
 	closeSettings = () => this.setState({ settingsOpen: false })
-	saveSettings = (settings: ISettings) => this.setState({ settingsOpen: false, settings })
+	saveSettings = (settings: ISettings) => {
+		set('simpledice_settings', settings)
+		this.setState({ settingsOpen: false, settings })
+	}
 
 	render() {
 		const { diceSet, settingsOpen, isRolling, settings, hasRolled } = this.state
 		return (
-			<StyledContainer>
-				<StyledSettingsButton
-					circular
-					icon="setting"
-					primary
-					onClick={this.openSettings}
-				/>
+			<FlexContainer>
+				<SettingsButton onClick={this.openSettings} />
 				<DiceDisplay
 					animationDuration={600}
 					diceSet={diceSet}
@@ -132,19 +133,7 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 					closeSettings={this.closeSettings}
 					saveSettings={this.saveSettings}
 				/>
-			</StyledContainer>
+			</FlexContainer>
 		)
 	}
 }
-
-const StyledContainer = styled(Container) `
-	display: flex;
-	flex-direction: column;
-	position: relative;
-`
-
-const StyledSettingsButton = styled(Button)`
-	position: absolute;
-	right: 0;
-	z-index: 1;
-` as StyledComponentClass<ButtonProps, {}>

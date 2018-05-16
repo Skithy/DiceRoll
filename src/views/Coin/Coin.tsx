@@ -1,7 +1,9 @@
 import React from 'react'
-import { Button, ButtonProps, Container } from 'semantic-ui-react'
+import { get, set } from 'scripts/store'
+import { Button, ButtonProps } from 'semantic-ui-react'
 import Shake from 'shake.js'
 import styled, { StyledComponentClass } from 'styled-components'
+import { FlexCenteredContainer } from '../common/FlexContainer'
 import CoinDisplay from './components/CoinDisplay'
 
 interface ICoinState {
@@ -14,10 +16,11 @@ export default class Coin extends React.PureComponent<{}, ICoinState> {
 		threshold: 15,
 		timeout: 1000,
 	})
+
 	state = {
 		isAnimating: false,
-		isHeads: false,
-	}
+		isHeads: get('coin_isHeads') || false,
+	} as ICoinState
 
 	componentDidMount() {
 		this.shakeEvent.start()
@@ -29,6 +32,7 @@ export default class Coin extends React.PureComponent<{}, ICoinState> {
 		this.shakeEvent.stop()
 		window.removeEventListener('shake', this.handleShake)
 		window.removeEventListener('keypress', this.handleKeyPress)
+		set('coin_isHeads', this.state.isHeads)
 	}
 
 	handleKeyPress = (e: KeyboardEvent): void => {
@@ -54,7 +58,7 @@ export default class Coin extends React.PureComponent<{}, ICoinState> {
 	render() {
 		const { isHeads, isAnimating } = this.state
 		return (
-			<StyledContainer>
+			<FlexCenteredContainer>
 				<CoinDisplay
 					animationDuration={1000}
 					isHeads={isHeads}
@@ -69,17 +73,10 @@ export default class Coin extends React.PureComponent<{}, ICoinState> {
 				>
 					Flip
 				</StyledFlipButton>
-			</StyledContainer>
+			</FlexCenteredContainer>
 		)
 	}
 }
-
-const StyledContainer = styled(Container)`
-	display: flex !important;
-	flex-direction: column;
-	align-items: center;
-	position: relative;
-`
 
 const StyledFlipButton = styled(Button)`
 	width: 8em !important;
