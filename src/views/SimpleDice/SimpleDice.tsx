@@ -53,8 +53,12 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 		this.shakeEvent.stop()
 		window.removeEventListener('shake', this.handleShake)
 		window.removeEventListener('keypress', this.handleKeyPress)
+	}
+
+	componentDidUpdate() {
 		set('simpledice_diceSet', this.state.diceSet)
 		set('simpledice_hasRolled', this.state.hasRolled)
+		set('simpledice_settings', this.state.settings)
 	}
 
 	changeValue = (n: number): void => {
@@ -100,7 +104,6 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 	openSettings = () => this.setState({ settingsOpen: true })
 	closeSettings = () => this.setState({ settingsOpen: false })
 	saveSettings = (settings: ISettings) => {
-		set('simpledice_settings', settings)
 		this.setState({ settingsOpen: false, settings })
 	}
 

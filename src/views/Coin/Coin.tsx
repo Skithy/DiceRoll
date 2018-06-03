@@ -32,6 +32,9 @@ export default class Coin extends React.PureComponent<{}, ICoinState> {
 		this.shakeEvent.stop()
 		window.removeEventListener('shake', this.handleShake)
 		window.removeEventListener('keypress', this.handleKeyPress)
+	}
+
+	componentDidUpdate() {
 		set('coin_isHeads', this.state.isHeads)
 	}
 

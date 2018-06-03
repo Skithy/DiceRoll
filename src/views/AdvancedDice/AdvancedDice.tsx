@@ -1,4 +1,5 @@
 import React from 'react'
+import { arrayMove, SortEnd } from 'react-sortable-hoc'
 import { Input } from 'semantic-ui-react'
 import { FlexContainer } from '../common/FlexContainer'
 import DiceTable from './components/DiceTable'
@@ -19,8 +20,8 @@ interface IAdvancedDiceState {
 
 export default class AdvancedDice extends React.PureComponent<{}, IAdvancedDiceState> {
 	state = {
-		diceSet: [],
-		inputString: '',
+		diceSet: parseInput('2d6'),
+		inputString: '2d6',
 		isValid: true,
 	} as IAdvancedDiceState
 
@@ -34,12 +35,19 @@ export default class AdvancedDice extends React.PureComponent<{}, IAdvancedDiceS
 		})
 	}
 
+	onSortEnd = ({ oldIndex, newIndex }: SortEnd) => this.setState({ diceSet: arrayMove(this.state.diceSet, oldIndex, newIndex) })
+
 	render() {
 		const { isValid, inputString, diceSet } = this.state
 		return (
 			<FlexContainer>
 				<Input error={!isValid} onChange={this.parseInput} value={inputString} />
-				<DiceTable diceSet={diceSet} />
+				<DiceTable
+					diceSet={diceSet}
+					onSortEnd={this.onSortEnd}
+					useDragHandle={true}
+					// hideSortableGhost={false}
+				/>
 			</FlexContainer>
 		)
 	}

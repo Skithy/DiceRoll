@@ -41,3 +41,7 @@ body {
 .ui.toggle.checkbox input:checked ~ label:before {
   background-color: #373737 !important;
 }
+
+.hide {
+  display: none;
+}

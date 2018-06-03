@@ -13,9 +13,6 @@ const Header: React.SFC = () => (
 			<Menu.Item name="coin" as={Link} to="/coin">
 				Coin
 			</Menu.Item>
-			{/* <Menu.Item name="adv" as={Link} to="/advanced">
-				Advanced Dice
-			</Menu.Item> */}
 		</Container>
 	</Menu>
 )
