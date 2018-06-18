@@ -1,53 +1,57 @@
 import React from 'react'
-import { arrayMove, SortEnd } from 'react-sortable-hoc'
 import { Input } from 'semantic-ui-react'
 import { FlexContainer } from '../common/FlexContainer'
 import DiceTable from './components/DiceTable'
 import { parseInput } from './parseInput'
 
-export interface IDiceSet {
-	sides: number
-	number: number
+export interface IDnDSet {
+	4: number[]
+	6: number[]
+	8: number[]
+	10: number[]
+	12: number[]
+	20: number[]
 }
+export const createEmptyDnDSet = (): IDnDSet => ({
+	4: [],
+	6: [],
+	8: [],
+	10: [],
+	12: [],
+	20: [],
+})
 
-interface IAdvancedDiceState {
-	diceSet: IDiceSet[]
+interface IDnDState {
+	diceSet: IDnDSet
 	inputString: string
 	isValid: boolean
 }
 // create graph of expected outcomes
 // min, max, median, standard deviation
 
-export default class AdvancedDice extends React.PureComponent<{}, IAdvancedDiceState> {
+export default class DnD extends React.PureComponent<{}, IDnDState> {
 	state = {
-		diceSet: parseInput('2d6'),
-		inputString: '2d6',
+		diceSet: createEmptyDnDSet(),
+		inputString: '',
 		isValid: true,
-	} as IAdvancedDiceState
+	} as IDnDState
 
 	parseInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
 		const inputString = e.target.value
 		const diceSet = parseInput(inputString)
 		this.setState({
-			diceSet: diceSet || [],
+			diceSet: diceSet || this.state.diceSet,
 			inputString,
 			isValid: !!diceSet,
 		})
 	}
-
-	onSortEnd = ({ oldIndex, newIndex }: SortEnd) => this.setState({ diceSet: arrayMove(this.state.diceSet, oldIndex, newIndex) })
 
 	render() {
 		const { isValid, inputString, diceSet } = this.state
 		return (
 			<FlexContainer>
 				<Input error={!isValid} onChange={this.parseInput} value={inputString} />
-				<DiceTable
-					diceSet={diceSet}
-					onSortEnd={this.onSortEnd}
-					useDragHandle={true}
-					// hideSortableGhost={false}
-				/>
+				<DiceTable diceSet={diceSet} />
 			</FlexContainer>
 		)
 	}
