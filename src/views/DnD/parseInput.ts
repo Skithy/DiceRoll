@@ -1,13 +1,29 @@
-import { createEmptyDnDSet, IDnDSet } from './DnD'
+import { createEmptyDnDSet, IDnDSet } from './DnDDice'
 
-export const parseInput = (inputString: string): IDnDSet | undefined => {
-	const matches = inputString.match(/[0-9]*d(4|6|8|(10)|(12)|(20))/gi)
-	if (matches) {
-		return matches.reduce((diceSet: IDnDSet, match: string) => {
-			const [num, sides] = match.split(/d/i)
-			diceSet[sides] = new Array(num ? parseInt(num, 10) : 1).fill(1)
-			return diceSet
-		}, createEmptyDnDSet())
+export const parseDnDSet = (inputString: string, prevDnDSet: IDnDSet): IDnDSet | undefined => {
+	const newDnDSet = createEmptyDnDSet()
+	for (const sides of Object.keys(prevDnDSet)) {
+		newDnDSet[sides].modifier = prevDnDSet[sides].modifier
+		newDnDSet[sides].result = prevDnDSet[sides].result
 	}
-	return undefined
+
+	if (!inputString) {
+		return newDnDSet
+	}
+
+	const inputs = inputString.trim().split(' ')
+	for (const input of inputs) {
+		if (/^[0-9]*d(4|6|8|(10)|(12)|(20))((\+|\-|\/|\*)(\+|\-)?[0-9]+)?$/i.test(input)) {
+			const [diceNum, rightD] = input.split(/d/i)
+			const [sides, modifierNum] = rightD.replace(/\+|\-|\/|\*/, '~').split('~')
+			newDnDSet[sides].diceNum = parseInt(diceNum, 10) || 1
+			if (modifierNum) {
+				newDnDSet[sides].modifier = input.match(/\+|\-|\/|\*/i)![0]
+				newDnDSet[sides].modifierNum = parseInt(modifierNum, 10)
+			}
+		} else {
+			return undefined
+		}
+	}
+	return newDnDSet
 }

@@ -45,3 +45,13 @@ body {
 .hide {
   display: none;
 }
+
+.dnd-modifier-dropdown {
+  width: 2.6em;
+  padding: 0.5em !important;
+}
+
+.dnd-modifier-dropdown .icon {
+  margin: auto !important;
+  font-size: 1.6em;
+}

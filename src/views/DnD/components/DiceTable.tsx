@@ -1,54 +1,50 @@
 import React from 'react'
 import { Button, Table } from 'semantic-ui-react'
-import styled from 'styled-components'
-import { IDnDSet } from '../DnD'
-
-const DiceIcon = styled.i`
-	font-size: 2em;
-`
-
-const sum = (arr: number[]): number => arr.reduce((total, val) => total + val, 0)
-
-interface ITableRowProps {
-	sides: string
-	values: number[]
-}
-const TableRow: React.SFC<ITableRowProps> = (props) => (
-	<Table.Row>
-		<Table.Cell><DiceIcon className={`mdi mdi-dice-d${props.sides}`}/></Table.Cell>
-		<Table.Cell>{props.values.length}</Table.Cell>
-		<Table.Cell>{sum(props.values)}</Table.Cell>
-	</Table.Row>
-)
+import { IDnDInputs } from '../DnD'
+import { IDnDSet, Modifier } from '../DnDDice'
+import TableRow from './TableRow'
 
 interface IDiceTableProps {
 	diceSet: IDnDSet
+	dndInputs: IDnDInputs
+	changeDiceNum: (sides: string, numString: string) => void
+	changeModifier: (sides: string, modifier: Modifier) => void
+	changeModifierNum: (sides: string, numString: string) => void
+	rollDice: (sides: string) => void
+	resetDice: () => void
 }
 
 const DiceTable: React.SFC<IDiceTableProps> = (props) => (
 	<Table celled unstackable>
 		<Table.Header>
 			<Table.Row>
-				<Table.HeaderCell>Dice</Table.HeaderCell>
-				<Table.HeaderCell>Number</Table.HeaderCell>
+				<Table.HeaderCell width="1">Dice</Table.HeaderCell>
+				<Table.HeaderCell width="2">Number</Table.HeaderCell>
+				<Table.HeaderCell width="3">Modifier</Table.HeaderCell>				
 				<Table.HeaderCell>Result</Table.HeaderCell>
+				<Table.HeaderCell width="1"/>
 			</Table.Row>
 		</Table.Header>
 
 		<Table.Body>
-			{Object.keys(props.diceSet).map((d, i) => <TableRow key={i} sides={d} values={props.diceSet[d]}/>)}
-			<Table.Row>
-				<Table.Cell>Total</Table.Cell>
-				<Table.Cell>{Object.keys(props.diceSet).reduce((total, val) => total + props.diceSet[val].length, 0)}</Table.Cell>
-				<Table.Cell>{Object.keys(props.diceSet).reduce((total, val) => total + sum(props.diceSet[val]), 0)}</Table.Cell>
-			</Table.Row>
+			{Object.keys(props.diceSet).map((d, i) => (
+				<TableRow
+					key={i}
+					sides={d}
+					dndDice={props.diceSet[d]}
+					dndInput={props.dndInputs[d]}
+					changeDiceNum={(e) => props.changeDiceNum(d, e.currentTarget.value)}
+					changeModifier={(e) => props.changeModifier(d, e)}
+					changeModifierNum={(e) => props.changeModifierNum(d, e.currentTarget.value)}
+					rollDice={() => props.rollDice(d)}
+				/>
+			))}
 		</Table.Body>
 
 		<Table.Footer>
 			<Table.Row>
 				<Table.HeaderCell colSpan="3">
-					<Button>Reset</Button>
-					<Button>Roll</Button>
+					<Button onClick={props.resetDice}>Reset</Button>
 				</Table.HeaderCell>
 			</Table.Row>
 		</Table.Footer>

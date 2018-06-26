@@ -14,8 +14,8 @@ const FooterDiv = styled.div`
 
 const Footer: React.SFC = () => (
 	<FooterDiv>
-		<div>SkithyApps © 2018</div>
-		<div>Made by Tony Dong</div>
+		<div id="footer-left">Skithy © 2018</div>
+		<div id="footer-right">Made by Tony Dong</div>
 	</FooterDiv>
 )
 export default Footer
