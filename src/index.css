@@ -1,57 +1,48 @@
 html {
-  background: repeating-linear-gradient(
-    45deg,
-    #FCEBD3,
-    #FCEBD3 80px,
-    #F4E4D4 80px,
-    #F4E4D4 160px
-  );
-  color: #373737;
-}
+  background: repeating-linear-gradient(45deg, #FCEBD3, #FCEBD3 80px, #F4E4D4 80px, #F4E4D4 160px);
+  color: #373737; }
 
 body {
-  height: auto;
-  background-color: transparent;
-  color: inherit;
-}
+  min-height: 100vh;
+  background-color: transparent; }
+
+#root {
+  height: 100%; }
+
+.page-grid {
+  min-height: 100%;
+  display: grid;
+  padding-top: 5em;
+  grid-template-rows: auto 2em; }
 
 .ui.page.modals.transition.visible {
-  display: flex !important;
-}
+  display: flex !important; }
 
 .ui.inverted.brown.menu,
 .ui.primary.button {
-  background-color: #373737;
-}
+  background-color: #373737; }
 
 .ui.primary.button:focus {
-  background-color: #232323;
-}
+  background-color: #232323; }
 
 .ui.primary.button:hover {
-  background-color: #2a2a2a;
-}
+  background-color: #2a2a2a; }
 
-.ui.toggle.checkbox input:focus:checked~.box:before,
-.ui.toggle.checkbox input:focus:checked~label:before {
-  background-color: #373737 !important
-}
+.ui.toggle.checkbox input:focus:checked ~ .box:before,
+.ui.toggle.checkbox input:focus:checked ~ label:before {
+  background-color: #373737 !important; }
 
 .ui.toggle.checkbox input:checked ~ .box:before,
 .ui.toggle.checkbox input:checked ~ label:before {
-  background-color: #373737 !important;
-}
+  background-color: #373737 !important; }
 
 .hide {
-  display: none;
-}
+  display: none; }
 
 .dnd-modifier-dropdown {
   width: 2.6em;
-  padding: 0.5em !important;
-}
+  padding: 0.5em !important; }
 
 .dnd-modifier-dropdown .icon {
   margin: auto !important;
-  font-size: 1.6em;
-}
+  font-size: 1.6em; }

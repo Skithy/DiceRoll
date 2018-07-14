@@ -4,7 +4,6 @@ export const parseDnDSet = (inputString: string, prevDnDSet: IDnDSet): IDnDSet |
 	const newDnDSet = createEmptyDnDSet()
 	for (const sides of Object.keys(prevDnDSet)) {
 		newDnDSet[sides].modifier = prevDnDSet[sides].modifier
-		newDnDSet[sides].result = prevDnDSet[sides].result
 	}
 
 	if (!inputString) {

@@ -1,16 +1,27 @@
 import React from 'react'
-import { rollDiceSet, sum } from 'scripts/helpers'
-import { Input } from 'semantic-ui-react'
-import { FlexContainer } from '../common/FlexContainer'
+import { rollDice, sum, tryParseInt } from 'scripts/helpers'
+import { Icon } from 'semantic-ui-react'
 import DiceTable from './components/DiceTable'
-import { createEmptyDnDSet, dndSetToInputs, IDnDDice, IDnDSet } from './DnDDice'
+import Log from './components/Log'
+import './DnD.css'
+import { createEmptyDnDSet, dndSetToInputs, IDnDDice, IDnDSet, Modifier } from './DnDDice'
 import { parseDnDSet } from './parseInput'
+
+export interface ILogEntry {
+	sides: number
+	diceSet: number[]
+	modifier: Modifier
+	modifierNum: number
+	total: number
+}
 
 export interface IDiceInput {
 	number: string
 	numberValidation: string
+	modifierNum: string
+	modifierNumValidation: string
 	modifier: string
-	modifierValidation: string
+	result: string
 }
 
 export interface IDnDInputs {
@@ -26,32 +37,50 @@ export interface IDnDInputs {
 interface IDnDState {
 	diceSet: IDnDSet
 	formInputs: IDnDInputs
+	rollLog: ILogEntry[]
 }
-// Preset dice pages (for each class)
 export default class DnD extends React.PureComponent<{}, IDnDState> {
-	state = {
-		diceSet: createEmptyDnDSet(),
-		formInputs: dndSetToInputs(createEmptyDnDSet())
-	} as IDnDState
+	constructor(props: any) {
+		super(props)
 
+		const dndSet = {
+			...createEmptyDnDSet(),
+			6: {
+				diceNum: 1,
+				modifier: '+',
+				modifierNum: 0,
+			},
+			10: {
+				diceNum: 1,
+				modifier: '+',
+				modifierNum: 0,
+			}
+		} as IDnDSet
+		
+		this.state = {
+			diceSet: dndSet,
+			formInputs: dndSetToInputs(dndSet),
+			rollLog: []
+		}
+	}
+	
 	parseInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
 		const inputString = e.target.value
 		const diceSet = parseDnDSet(inputString, this.state.diceSet)
 		this.setState({
 			diceSet: diceSet || this.state.diceSet,
 			formInputs: {
-				...dndSetToInputs(diceSet || this.state.diceSet),
+				...dndSetToInputs(diceSet || this.state.diceSet, this.state.formInputs),
 				search: { input: inputString, inputValidation: diceSet ? '' : 'error' }
 			}
 		})
 	}
 
-	resetDice = (): void => this.setState({ diceSet: createEmptyDnDSet(), formInputs: dndSetToInputs(createEmptyDnDSet()) })
+	resetDice = (): void => this.setState({ diceSet: createEmptyDnDSet(), formInputs: dndSetToInputs() })
 
 	changeDiceNum = (sides: string, numString: string) => {
-		let num: number | undefined
-		try { num = parseInt(numString, 10) } catch (e) { num = undefined }
-		if (num !== undefined && num >= 0) {
+		const num = tryParseInt(numString)
+		if (!isNaN(num) && num >= 0) {
 			const newDnDSet = {
 				...this.state.diceSet,
 				[sides]: {
@@ -59,7 +88,7 @@ export default class DnD extends React.PureComponent<{}, IDnDState> {
 					diceNum: num,
 				}
 			}
-			this.setState({ diceSet: newDnDSet, formInputs: dndSetToInputs(newDnDSet) })
+			this.setState({ diceSet: newDnDSet, formInputs: dndSetToInputs(newDnDSet, this.state.formInputs) })
 		} else {
 			this.setState({
 				formInputs: {
@@ -82,13 +111,12 @@ export default class DnD extends React.PureComponent<{}, IDnDState> {
 				modifier,
 			}
 		}
-		this.setState({ diceSet: newDnDSet })
+		this.setState({ diceSet: newDnDSet, formInputs: dndSetToInputs(newDnDSet) })
 	}
 
 	changeModifierNum = (sides: string, numString: string) => {
-		let num: number | undefined
-		try { num = parseInt(numString, 10) } catch (e) { num = undefined }
-		if (num !== undefined && !isNaN(num)) {
+		const num = tryParseInt(numString)
+		if (!isNaN(num)) {
 			const newDnDSet = {
 				...this.state.diceSet,
 				[sides]: {
@@ -103,8 +131,8 @@ export default class DnD extends React.PureComponent<{}, IDnDState> {
 					...this.state.formInputs,
 					[sides]: {
 						...this.state.formInputs[sides],
-						modifier: numString,
-						modifierValidation: 'error'
+						modifierNum: numString,
+						modifierNumValidation: 'error'
 					}
 				}
 			})
@@ -113,7 +141,7 @@ export default class DnD extends React.PureComponent<{}, IDnDState> {
 
 	rollDice = (sides: string) => {
 		const dndDice: IDnDDice = this.state.diceSet[sides]
-		const diceSet = rollDiceSet(dndDice.diceNum, parseInt(sides, 10))
+		const diceSet = rollDice(dndDice.diceNum, parseInt(sides, 10))
 		let total: number = sum(diceSet)
 		switch (dndDice.modifier) {
 			case '+':
@@ -130,41 +158,49 @@ export default class DnD extends React.PureComponent<{}, IDnDState> {
 				break
 		}
 
-		const newDnDSet = {
-			...this.state.diceSet,
+		const formInputs = {
+			...this.state.formInputs,
 			[sides]: {
-				...this.state.diceSet[sides],
-				result: {
-					diceSet,
-					modifier: dndDice.modifier,
-					modifierNum: dndDice.modifierNum,
-					total,
-				},
+				...this.state.formInputs[sides],
+				result: total.toString()
 			}
 		}
-		this.setState({ diceSet: newDnDSet })
+		const logEntry: ILogEntry = {
+			diceSet,
+			modifier: dndDice.modifier,
+			modifierNum: dndDice.modifierNum,
+			sides: tryParseInt(sides),
+			total,
+		}
+		const rollLog = [...this.state.rollLog, logEntry]
+		this.setState({ formInputs, rollLog })
 	}
 
 	render() {
-		const { diceSet, formInputs } = this.state
+		const { formInputs, rollLog } = this.state
 		return (
-			<FlexContainer>
-				<Input
-					error={!!formInputs.search.inputValidation}
-					onChange={this.parseInput}
-					value={formInputs.search.input}
-					placeholder="2d20 d6+5 ..."
-				/>
-				<DiceTable
-					diceSet={diceSet}
-					dndInputs={formInputs}
-					changeDiceNum={this.changeDiceNum}
-					changeModifier={this.changeModifier}
-					changeModifierNum={this.changeModifierNum}
-					rollDice={this.rollDice}
-					resetDice={this.resetDice}
-				/>
-			</FlexContainer>
+			<div className="dnd-grid">
+				<div className="dnd-table">
+					<div className="dice-input-wrapper">
+						<input
+							className={`dice-input ${formInputs.search.inputValidation}`}
+							onChange={this.parseInput}
+							value={formInputs.search.input}
+							placeholder="2d20 d6+5 ..."
+						/>
+						<Icon name="search" className="dice-input-icon"/>
+					</div>
+					<DiceTable
+						dndInputs={formInputs}
+						changeDiceNum={this.changeDiceNum}
+						changeModifier={this.changeModifier}
+						changeModifierNum={this.changeModifierNum}
+						rollDice={this.rollDice}
+						resetDice={this.resetDice}
+					/>
+				</div>
+				<div className="dnd-log"><Log rollLog={rollLog}/></div>
+			</div>
 		)
 	}
 }

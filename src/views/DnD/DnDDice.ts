@@ -1,18 +1,11 @@
 import { IDnDInputs } from './DnD'
 
 export type Modifier = '+' | '-' | '*' | '/'
-export interface IDnDDiceResult {
-	diceSet: number[]
-	modifier: Modifier
-	modifierNum: number
-	total: number
-}
 
 export interface IDnDDice {
 	diceNum: number
 	modifier: Modifier
 	modifierNum: number
-	result?: IDnDDiceResult
 }
 
 export interface IDnDSet {
@@ -34,29 +27,34 @@ export const createEmptyDnDSet = (): IDnDSet => [4, 6, 8, 10, 12, 20].reduce((dn
 	{} as IDnDSet
 )
 
+export const diceToString = (sides: string, dndDice: IDnDDice): string => {
+	const modifierString = ('+-'.includes(dndDice.modifier) && dndDice.modifierNum !== 0) || ('*/'.includes(dndDice.modifier) && dndDice.modifierNum !== 1)
+		? `${dndDice.modifier}${dndDice.modifierNum}`
+		: ''
+	return `${dndDice.diceNum}d${sides}${modifierString}`
+}
+
 const dndSetToInputString = (dndSet: IDnDSet): string => {
-	const diceStrings = Object.keys(dndSet).filter((sides) => dndSet[sides].diceNum !== 0).map((sides) => {
-		const dndDice: IDnDDice = dndSet[sides]
-		const modifierString = ('+-'.includes(dndDice.modifier) && dndDice.modifierNum !== 0) || '*/'.includes(dndDice.modifier)
-			? `${dndDice.modifier}${dndDice.modifierNum}`
-			: ''
-		return `${dndDice.diceNum}d${sides}${modifierString}`
-	})
+	const diceStrings = Object.keys(dndSet).filter((sides) => (dndSet[sides] as IDnDDice).diceNum !== 0).map((sides) => diceToString(sides, dndSet[sides]))
 	return diceStrings.length > 0 ? diceStrings.join(' ') : ''
 }
 
-export const dndSetToInputs = (dndSet: IDnDSet): IDnDInputs => {
-	const dndInputs = Object.keys(dndSet).reduce((inputs, sides) => {
+export const dndSetToInputs = (dndSet?: IDnDSet, prevInputs?: IDnDInputs): IDnDInputs => {
+	const set = dndSet || createEmptyDnDSet()
+
+	const dndInputs = Object.keys(set).reduce((inputs, sides) => {
 		return {
 			...inputs,
 			[sides]: {
-				modifier: dndSet[sides].modifierNum,
-				modifierValidation: '',
-				number: dndSet[sides].diceNum,
+				modifier: set[sides].modifier,
+				modifierNum: set[sides].modifierNum.toString(),
+				modifierNumValidation: '',
+				number: set[sides].diceNum.toString(),
 				numberValidation: '',
+				result: prevInputs ? prevInputs[sides].result : ''
 			}
 		}
-	}, { search: { input: dndSetToInputString(dndSet), inputValidation: '' } })
+	}, { search: { input: dndSetToInputString(set), inputValidation: '' } })
 
 	return dndInputs as IDnDInputs
 }

@@ -1,0 +1,148 @@
+.dnd-grid {
+  display: grid;
+  grid-template-rows: auto 3em auto;
+  padding-left: 1em;
+  padding-right: 1em;
+  grid-template-areas: 'table' '.' 'log'; }
+  @media (min-width: 1000px) {
+    .dnd-grid {
+      grid-template-rows: none;
+      grid-template-columns: minmax(3em, auto) minmax(4em, 4fr) 3em minmax(4em, 4fr) minmax(3em, auto);
+      grid-template-areas: '. table . log .'; } }
+  .dnd-grid .dnd-table {
+    grid-area: table; }
+  .dnd-grid .dnd-log {
+    grid-area: log; }
+
+.error {
+  border-color: red !important; }
+
+.dice-input-wrapper {
+  position: relative; }
+  .dice-input-wrapper .dice-input {
+    margin: 0.5em;
+    width: calc(100% - 1em);
+    border-width: 0.2em;
+    border-style: solid;
+    border-color: #373737;
+    padding: 0.5em;
+    font-size: larger;
+    font-weight: 600;
+    background-color: transparent;
+    border-radius: 0.5em; }
+    .dice-input-wrapper .dice-input:focus {
+      background-color: white;
+      outline: none;
+      color: #373737;
+      border-color: #373737; }
+  .dice-input-wrapper .dice-input-icon {
+    position: absolute;
+    top: 1.4em;
+    right: 1em;
+    pointer-events: none; }
+
+.dice-table {
+  table-layout: fixed;
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 0.5em; }
+  .dice-table td {
+    height: 4em;
+    padding: 0.5em; }
+  .dice-table .gray {
+    color: gray; }
+  .dice-table .td-input .table-input {
+    height: 100%;
+    width: 100%;
+    border-width: 0.2em;
+    border-style: solid;
+    border-color: #373737;
+    padding-left: 0.5em;
+    background-color: transparent;
+    font-size: larger;
+    font-weight: 600;
+    border-radius: 0.5em; }
+    .dice-table .td-input .table-input:focus {
+      outline: none;
+      color: #373737;
+      border-color: #373737;
+      background-color: white; }
+  .dice-table .td-input .gray {
+    border-color: gray; }
+  .dice-table .td-modifier-input {
+    display: flex; }
+    .dice-table .td-modifier-input .dnd-modifier-dropdown {
+      margin-right: 0;
+      height: 100%;
+      border-top-left-radius: 0.5em;
+      border-bottom-left-radius: 0.5em;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      width: 3em;
+      display: flex;
+      align-items: center; }
+      .dice-table .td-modifier-input .dnd-modifier-dropdown .text {
+        font-size: 2em; }
+      .dice-table .td-modifier-input .dnd-modifier-dropdown .icon {
+        position: absolute;
+        right: 0.4em; }
+    .dice-table .td-modifier-input .table-input {
+      height: 100%;
+      width: calc(100% - 3em);
+      border-width: 0.2em;
+      border-style: solid;
+      border-color: #373737;
+      border-left-width: 0;
+      padding-left: 0.5em;
+      background-color: transparent;
+      font-size: larger;
+      font-weight: 600;
+      border-top-right-radius: 0.5em;
+      border-bottom-right-radius: 0.5em; }
+      .dice-table .td-modifier-input .table-input:focus {
+        outline: none;
+        color: #373737;
+        border-color: #373737;
+        background-color: white; }
+    .dice-table .td-modifier-input .gray {
+      border-color: gray; }
+  .dice-table .td-button .roll-button {
+    height: 100%;
+    width: 100%;
+    padding: 0.5em; }
+  .dice-table .td-dice {
+    position: relative; }
+    .dice-table .td-dice i {
+      position: absolute;
+      top: 0.15em;
+      font-size: 3em;
+      line-height: 1em; }
+  .dice-table .td-result {
+    text-align: center; }
+    .dice-table .td-result p {
+      font-weight: 600;
+      font-size: large; }
+
+tfoot td, tfoot th {
+  border: 0; }
+
+.reset-button {
+  background-color: #382633 !important;
+  color: white !important; }
+
+#col-dice {
+  width: 4em; }
+
+#col-num {
+  min-width: 2em; }
+
+#col-roll {
+  width: 5em; }
+
+#col-result {
+  width: 5em; }
+
+.log-log {
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden; }

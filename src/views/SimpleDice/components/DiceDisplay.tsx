@@ -1,6 +1,6 @@
 import React from 'react'
+import { rollDice } from 'scripts/helpers'
 import styled from 'styled-components'
-import { rollDiceSet } from '../functions'
 
 interface IDiceDisplayProps {
 	diceSet: number[]
@@ -109,7 +109,7 @@ export default class DiceDisplay extends React.PureComponent<IDiceDisplayProps, 
 		const { diceSet, shakeAngle, shakeIntensity } = this.state
 		this.setState({
 			animationDuration: duration,
-			diceSet: rollDiceSet(diceSet, 6),
+			diceSet: rollDice(diceSet.length, 6),
 			shakeAngle: shakeAngle === shakeIntensity ? -shakeIntensity : shakeIntensity,
 		})
 	}

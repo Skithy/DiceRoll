@@ -12,12 +12,14 @@ class App extends React.Component {
       <BrowserRouter>
         <>
           <Header />
-          <div style={{ marginTop: '6em' }}>
-            <Route exact path="/" component={SimpleDice} />
-            <Route path="/coin" component={Coin} />
-            <Route path="/dnd" component={DnD} />
+          <div className="page-grid">
+            <div className="content">
+              <Route exact path="/" component={SimpleDice} />
+              <Route path="/coin" component={Coin} />
+              <Route path="/dnd" component={DnD} />
+            </div>
+            <Footer />
           </div>
-          <Footer />
         </>
       </BrowserRouter>
     )

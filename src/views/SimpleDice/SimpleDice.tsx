@@ -1,4 +1,5 @@
 import React from 'react'
+import { newDiceSet, rollDice } from 'scripts/helpers'
 import { get, set } from 'scripts/store'
 import Shake from 'shake.js'
 import { FlexContainer } from '../common/FlexContainer'
@@ -8,7 +9,6 @@ import DiceSettings from './components/DiceSettings'
 import DiceSumDisplay from './components/DiceSumDisplay'
 import RollButtonRow from './components/RollButtonRow'
 import { MAXDICE } from './constants'
-import { newDiceSet, rollDiceSet } from './functions'
 
 export interface ISettings {
 	keyboardCommands: boolean
@@ -94,7 +94,7 @@ export default class SimpleDice extends React.PureComponent<{}, ISimpleDiceState
 		}
 		
 		this.setState({
-			diceSet: rollDiceSet(this.state.diceSet, 6),
+			diceSet: rollDice(this.state.diceSet.length, 6),
 			hasRolled: true,
 			isRolling: this.state.settings.animations,
 		})
