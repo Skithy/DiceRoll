@@ -1,8 +1,8 @@
 .dnd-grid {
   display: grid;
   grid-template-rows: auto 3em auto;
-  padding-left: 1em;
-  padding-right: 1em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
   grid-template-areas: 'table' '.' 'log'; }
   @media (min-width: 1000px) {
     .dnd-grid {
@@ -47,8 +47,12 @@
   width: 100%;
   margin-top: 0.5em; }
   .dice-table td {
-    height: 4em;
-    padding: 0.5em; }
+    height: 3em;
+    padding: 0.1em; }
+    @media (min-width: 400px) {
+      .dice-table td {
+        height: 4em;
+        padding: 0.5em; } }
   .dice-table .gray {
     color: gray; }
   .dice-table .td-input .table-input {
@@ -113,10 +117,14 @@
   .dice-table .td-dice {
     position: relative; }
     .dice-table .td-dice i {
+      font-size: 2em;
+      top: 0.25em;
       position: absolute;
-      top: 0.15em;
-      font-size: 3em;
       line-height: 1em; }
+      @media (min-width: 400px) {
+        .dice-table .td-dice i {
+          top: 0.15em;
+          font-size: 3em; } }
   .dice-table .td-result {
     text-align: center; }
     .dice-table .td-result p {
@@ -131,10 +139,10 @@ tfoot td, tfoot th {
   color: white !important; }
 
 #col-dice {
-  width: 4em; }
-
-#col-num {
-  min-width: 2em; }
+  width: 2.5em; }
+  @media (min-width: 400px) {
+    #col-dice {
+      width: 4em; } }
 
 #col-roll {
   width: 5em; }

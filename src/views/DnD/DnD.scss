@@ -3,18 +3,17 @@ $brown: #373737;
 .dnd-grid {
 	display: grid;
 	grid-template-rows: auto 3em auto;
-	padding-left: 1em;
-	padding-right: 1em;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
 	grid-template-areas:
 	'table'
 	'.'
 	'log';
 	
 	@media (min-width: 1000px) {
-	grid-template-rows: none;
-	grid-template-columns: minmax(3em, auto) minmax(4em, 4fr) 3em minmax(4em, 4fr) minmax(3em, auto);
-	grid-template-areas: '. table . log .';
-		
+		grid-template-rows: none;
+		grid-template-columns: minmax(3em, auto) minmax(4em, 4fr) 3em minmax(4em, 4fr) minmax(3em, auto);
+		grid-template-areas: '. table . log .';	
 	}
 
 	.dnd-table {
@@ -68,8 +67,13 @@ $brown: #373737;
 	margin-top: 0.5em;
 
 	td {
-		height: 4em;
-		padding: 0.5em;
+		height: 3em;
+		padding: 0.1em;
+		@media (min-width: 400px) {
+			height: 4em;
+			padding: 0.5em;
+			
+		}
 	}
 
 	.gray {
@@ -166,10 +170,14 @@ $brown: #373737;
 		position: relative;
 
 		i {
+			font-size: 2em;
+			top: 0.25em;
 			position: absolute;
-			top: 0.15em;
-			font-size: 3em;
 			line-height: 1em;
+			@media (min-width: 400px) {
+				top: 0.15em;
+				font-size: 3em;
+			}
 		}
 	}
 
@@ -193,11 +201,11 @@ tfoot {
 }
 
 #col-dice {
-	width: 4em;
-}
-
-#col-num {
-	min-width: 2em;
+	width: 2.5em;
+	@media (min-width: 400px) {
+		width: 4em;
+		
+	}
 }
 
 #col-roll {
