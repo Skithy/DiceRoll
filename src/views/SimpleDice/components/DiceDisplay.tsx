@@ -150,7 +150,7 @@ export default class DiceDisplay extends React.PureComponent<IDiceDisplayProps, 
 }
 
 const StyledContainer = styled.div`
-	height: 50vh;
+	height: 70vh;
 	display: flex;
 	flex-direction: column-reverse;
 	align-items: center;
