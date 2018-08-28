@@ -1,10 +1,33 @@
 $brown: #373737;
+$padding_small: 0.5em;
+$border_radius: 0.5em;
+
+.input {
+	border-width: 0.2em;
+	border-style: solid;
+	border-color: $brown;
+	border-radius: $border_radius;
+	padding: $padding_small;
+	font-size: larger;
+	font-weight: 600;
+	background-color: transparent;
+
+	&.gray {
+		border-color: gray;
+	}
+	&:focus {
+		background-color: white;
+		outline: none;
+		color: $brown;
+		border-color: $brown;
+	}
+}
 
 .dnd-grid {
 	display: grid;
 	grid-template-rows: auto 3em auto;
-	padding-left: 0.5em;
-	padding-right: 0.5em;
+	padding-left: $padding_small;
+	padding-right: $padding_small;
 	grid-template-areas:
 	'table'
 	'.'
@@ -32,31 +55,22 @@ $brown: #373737;
 
 .dice-input-wrapper {
 	position: relative;
+	display: flex;
 
 	.dice-input {
-		margin: 0.5em;
-		width: calc(100% - 1em);
-		border-width: 0.2em;
-		border-style: solid;
-		border-color: $brown;
-		padding: 0.5em;
-		font-size: larger;
-		font-weight: 600;
-		background-color: transparent;
-		border-radius: 0.5em;
-
-		&:focus {
-			background-color: white;
-			outline: none;
-			color: $brown;
-			border-color: $brown;
-		}
+		@extend .input;
+		margin: $padding_small;
+		margin-right: 0;
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+		width: calc(100% - 5em);	
 	}
-	.dice-input-icon {
-		position: absolute;
-		top: 1.4em;
-		right: 1em;
-		pointer-events: none;
+	.roll-all-button {
+		width: 4.5em;
+		margin: 0.6em 0;
+		padding: $padding_small;
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
 	}
 }
 
@@ -64,15 +78,14 @@ $brown: #373737;
 	table-layout: fixed;
 	border-collapse: collapse;
 	width: 100%;
-	margin-top: 0.5em;
+	margin-top: $padding_small;
 
 	td {
 		height: 3em;
 		padding: 0.1em;
 		@media (min-width: 400px) {
 			height: 4em;
-			padding: 0.5em;
-			
+			padding: $padding_small;			
 		}
 	}
 
@@ -82,29 +95,10 @@ $brown: #373737;
 
 	.td-input {
 		.table-input {
+			@extend .input;
 			height: 100%;
 			width: 100%;
-			border-width: 0.2em;
-			border-style: solid;
-			border-color: $brown;
-			padding-left: 0.5em;
-			background-color: transparent;
-			font-size: larger;
-			font-weight: 600;
-			border-radius: 0.5em;
-
-			&:focus {
-				outline: none;
-				color: $brown;
-				border-color: $brown;
-				background-color: white;
-			}
 		}
-
-		.gray {
-			border-color: gray;
-		}
-
 	}
 
 	.td-modifier-input {
@@ -117,45 +111,56 @@ $brown: #373737;
 			border-bottom-left-radius: 0.5em;
 			border-top-right-radius: 0;
 			border-bottom-right-radius: 0;
-			width: 3em;
+			width: 2.5em;
 			display: flex;
 			align-items: center;
 
-			.text {
+			&.error {
+				background-color: red;
+				div.text {
+					color: white;
+				}
+			}
+			&.gray {
+				background-color: gray;
+			}
+
+			div.text {
 				font-size: 2em;
+				position: relative;
+				right: -0.1em;
 			}
 			.icon {
-				position: absolute;
-				right: 0.4em;
+				visibility: hidden;
+			}
+			.menu {
+				width: 100%;
+				border-top-left-radius: 0;
+				border-top-right-radius: 0;
+				border-bottom-left-radius: 0.5em;
+				border-bottom-right-radius: 0.5em;
+				.item {
+					padding: 0.8em !important;
+					text-align: center;
+
+					.text {
+						font-size: 1.5em;
+					}
+					&:hover {
+						background-color: $brown;
+						color: white;
+					}
+				}
 			}
 		}
 
 		.table-input {
+			@extend .input;
 			height: 100%;
-			width: calc(100% - 3em);
-			border-width: 0.2em;
-			border-style: solid;
-			border-color: $brown;
-			border-left-width: 0;
-			padding-left: 0.5em;
-			background-color: transparent;
-			font-size: larger;
-			font-weight: 600;
-			border-top-right-radius: 0.5em;
-			border-bottom-right-radius: 0.5em;
-
-			&:focus {
-				outline: none;
-				color: $brown;
-				border-color: $brown;
-				background-color: white;
-			}
+			width: calc(100% - 2em);
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
 		}
-
-		.gray {
-			border-color: gray;
-		}
-		
 	}
 
 	.td-button {
@@ -196,7 +201,7 @@ tfoot {
 }
 
 .reset-button {
-	background-color: #382633 !important;
+	background-color: darken(crimson, 10%) !important;
 	color: white !important;
 }
 
@@ -204,12 +209,14 @@ tfoot {
 	width: 2.5em;
 	@media (min-width: 400px) {
 		width: 4em;
-		
 	}
 }
 
 #col-roll {
-	width: 5em;
+	width: 3em;
+	@media (min-width: 400px) {
+		width: 5em;
+	}
 }
 
 #col-result {
@@ -217,7 +224,48 @@ tfoot {
 }
 
 .log-log {
-	max-height: 70vh;
+	max-height: 60vh;
 	overflow-y: auto;
 	overflow-x: hidden;
+}
+
+.log-container {
+	padding-top: 0.8em;
+
+	.log-header {
+		position: relative;
+		border-top-left-radius: $border_radius !important;
+		border-top-right-radius: $border_radius !important;
+		background-color: $brown !important;
+		color: white;
+
+		.log-reset-button {
+			position: absolute;
+			padding: 0.4em;
+			right: 0.2em;
+			top: 0.5em;
+			width: 4em;
+			background-color: white;
+			color: $brown;
+
+			&:hover {
+				background-color: darken(crimson, 10%);
+				color: white;
+			}
+		}
+	}
+
+	.log-log {
+		.log-time {
+			color: gray;
+			float: right;
+		}
+		.segment:hover {
+			background-color: lightblue;
+		}
+		&:last-child {
+			border-bottom-left-radius: $border_radius;
+			border-bottom-right-radius: $border_radius;
+		}
+	}
 }

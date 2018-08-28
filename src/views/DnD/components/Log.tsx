@@ -1,24 +1,26 @@
 import * as React from 'react'
-import { Header, Segment } from 'semantic-ui-react'
+import { pure } from 'recompose'
+import { Button, Header, Segment } from 'semantic-ui-react'
 import { ILogEntry } from '../DnD'
-import { diceToString } from '../DnDDice'
+import LogRow from './LogRow'
 
 interface ILogProps {
 	rollLog: ILogEntry[]
+	resetLog: () => void
 }
 
-const Log: React.SFC<ILogProps> = props => {
+const Log: React.SFC<ILogProps> = ({ rollLog, resetLog }) => {
 	return (
-		<div>
-			<Header as="h1" attached="top">
+		<div className="log-container">
+			<Header className="log-header" attached="top">
 				Log
+				<Button className="log-reset-button" onClick={resetLog}>Reset</Button>
 	    </Header>
 			<div className="log-log">
-				{ [...props.rollLog].reverse().map((log, i) => 
-					<Segment key={i} attached><p><b>{diceToString(log.sides.toString(), { diceNum: log.diceSet.length, modifier: log.modifier, modifierNum: log.modifierNum })}</b>: ({log.diceSet.join(' + ')}) {('+-'.includes(log.modifier) && log.modifierNum !== 0) || ('*/'.includes(log.modifier) && log.modifierNum !== 1) ? <i>{`${log.modifier} ${log.modifierNum}`}</i> : null} = <b>{log.total}</b></p></Segment>
-				)}
+				{[...rollLog].reverse().map((log, i) => <LogRow key={i} log={log} />)}
+				{ rollLog.length === 0 && <Segment attached>Log is currently empty.</Segment>}
 			</div>
 		</div>
 	)
 }
-export default Log
+export default pure(Log)

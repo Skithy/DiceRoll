@@ -1,3 +1,20 @@
+.input, .dice-input-wrapper .dice-input, .dice-table .td-input .table-input, .dice-table .td-modifier-input .table-input {
+  border-width: 0.2em;
+  border-style: solid;
+  border-color: #373737;
+  border-radius: 0.5em;
+  padding: 0.5em;
+  font-size: larger;
+  font-weight: 600;
+  background-color: transparent; }
+  .input.gray, .dice-input-wrapper .gray.dice-input, .dice-table .td-input .gray.table-input, .dice-table .td-modifier-input .gray.table-input {
+    border-color: gray; }
+  .input:focus, .dice-input-wrapper .dice-input:focus, .dice-table .td-input .table-input:focus, .dice-table .td-modifier-input .table-input:focus {
+    background-color: white;
+    outline: none;
+    color: #373737;
+    border-color: #373737; }
+
 .dnd-grid {
   display: grid;
   grid-template-rows: auto 3em auto;
@@ -18,28 +35,20 @@
   border-color: red !important; }
 
 .dice-input-wrapper {
-  position: relative; }
+  position: relative;
+  display: flex; }
   .dice-input-wrapper .dice-input {
     margin: 0.5em;
-    width: calc(100% - 1em);
-    border-width: 0.2em;
-    border-style: solid;
-    border-color: #373737;
+    margin-right: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    width: calc(100% - 5em); }
+  .dice-input-wrapper .roll-all-button {
+    width: 4.5em;
+    margin: 0.6em 0;
     padding: 0.5em;
-    font-size: larger;
-    font-weight: 600;
-    background-color: transparent;
-    border-radius: 0.5em; }
-    .dice-input-wrapper .dice-input:focus {
-      background-color: white;
-      outline: none;
-      color: #373737;
-      border-color: #373737; }
-  .dice-input-wrapper .dice-input-icon {
-    position: absolute;
-    top: 1.4em;
-    right: 1em;
-    pointer-events: none; }
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0; }
 
 .dice-table {
   table-layout: fixed;
@@ -57,22 +66,7 @@
     color: gray; }
   .dice-table .td-input .table-input {
     height: 100%;
-    width: 100%;
-    border-width: 0.2em;
-    border-style: solid;
-    border-color: #373737;
-    padding-left: 0.5em;
-    background-color: transparent;
-    font-size: larger;
-    font-weight: 600;
-    border-radius: 0.5em; }
-    .dice-table .td-input .table-input:focus {
-      outline: none;
-      color: #373737;
-      border-color: #373737;
-      background-color: white; }
-  .dice-table .td-input .gray {
-    border-color: gray; }
+    width: 100%; }
   .dice-table .td-modifier-input {
     display: flex; }
     .dice-table .td-modifier-input .dnd-modifier-dropdown {
@@ -82,34 +76,40 @@
       border-bottom-left-radius: 0.5em;
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
-      width: 3em;
+      width: 2.5em;
       display: flex;
       align-items: center; }
-      .dice-table .td-modifier-input .dnd-modifier-dropdown .text {
-        font-size: 2em; }
+      .dice-table .td-modifier-input .dnd-modifier-dropdown.error {
+        background-color: red; }
+        .dice-table .td-modifier-input .dnd-modifier-dropdown.error div.text {
+          color: white; }
+      .dice-table .td-modifier-input .dnd-modifier-dropdown.gray {
+        background-color: gray; }
+      .dice-table .td-modifier-input .dnd-modifier-dropdown div.text {
+        font-size: 2em;
+        position: relative;
+        right: -0.1em; }
       .dice-table .td-modifier-input .dnd-modifier-dropdown .icon {
-        position: absolute;
-        right: 0.4em; }
+        visibility: hidden; }
+      .dice-table .td-modifier-input .dnd-modifier-dropdown .menu {
+        width: 100%;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        border-bottom-left-radius: 0.5em;
+        border-bottom-right-radius: 0.5em; }
+        .dice-table .td-modifier-input .dnd-modifier-dropdown .menu .item {
+          padding: 0.8em !important;
+          text-align: center; }
+          .dice-table .td-modifier-input .dnd-modifier-dropdown .menu .item .text {
+            font-size: 1.5em; }
+          .dice-table .td-modifier-input .dnd-modifier-dropdown .menu .item:hover {
+            background-color: #373737;
+            color: white; }
     .dice-table .td-modifier-input .table-input {
       height: 100%;
-      width: calc(100% - 3em);
-      border-width: 0.2em;
-      border-style: solid;
-      border-color: #373737;
-      border-left-width: 0;
-      padding-left: 0.5em;
-      background-color: transparent;
-      font-size: larger;
-      font-weight: 600;
-      border-top-right-radius: 0.5em;
-      border-bottom-right-radius: 0.5em; }
-      .dice-table .td-modifier-input .table-input:focus {
-        outline: none;
-        color: #373737;
-        border-color: #373737;
-        background-color: white; }
-    .dice-table .td-modifier-input .gray {
-      border-color: gray; }
+      width: calc(100% - 2em);
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0; }
   .dice-table .td-button .roll-button {
     height: 100%;
     width: 100%;
@@ -135,7 +135,7 @@ tfoot td, tfoot th {
   border: 0; }
 
 .reset-button {
-  background-color: #382633 !important;
+  background-color: #ad102f !important;
   color: white !important; }
 
 #col-dice {
@@ -145,12 +145,43 @@ tfoot td, tfoot th {
       width: 4em; } }
 
 #col-roll {
-  width: 5em; }
+  width: 3em; }
+  @media (min-width: 400px) {
+    #col-roll {
+      width: 5em; } }
 
 #col-result {
   width: 5em; }
 
 .log-log {
-  max-height: 70vh;
+  max-height: 60vh;
   overflow-y: auto;
   overflow-x: hidden; }
+
+.log-container {
+  padding-top: 0.8em; }
+  .log-container .log-header {
+    position: relative;
+    border-top-left-radius: 0.5em !important;
+    border-top-right-radius: 0.5em !important;
+    background-color: #373737 !important;
+    color: white; }
+    .log-container .log-header .log-reset-button {
+      position: absolute;
+      padding: 0.4em;
+      right: 0.2em;
+      top: 0.5em;
+      width: 4em;
+      background-color: white;
+      color: #373737; }
+      .log-container .log-header .log-reset-button:hover {
+        background-color: #ad102f;
+        color: white; }
+  .log-container .log-log .log-time {
+    color: gray;
+    float: right; }
+  .log-container .log-log .segment:hover {
+    background-color: lightblue; }
+  .log-container .log-log:last-child {
+    border-bottom-left-radius: 0.5em;
+    border-bottom-right-radius: 0.5em; }

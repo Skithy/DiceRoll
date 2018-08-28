@@ -1,4 +1,5 @@
 import React from 'react'
+import { pure } from 'recompose'
 import { Button } from 'semantic-ui-react'
 import { IDnDInputs } from '../DnD'
 import { Modifier } from '../DnDDice'
@@ -9,6 +10,7 @@ interface IDiceTableProps {
 	changeDiceNum: (sides: string, numString: string) => void
 	changeModifier: (sides: string, modifier: Modifier) => void
 	changeModifierNum: (sides: string, numString: string) => void
+	onEnter: (e: React.KeyboardEvent, sides?: string) => void
 	rollDice: (sides: string) => void
 	resetDice: () => void
 }
@@ -34,6 +36,7 @@ const DiceTable: React.SFC<IDiceTableProps> = (props) => (
 					changeDiceNum={(e) => props.changeDiceNum(d, e.currentTarget.value)}
 					changeModifier={(e) => props.changeModifier(d, e)}
 					changeModifierNum={(e) => props.changeModifierNum(d, e.currentTarget.value)}
+					onEnter={(e) => props.onEnter(e, d)}
 					rollDice={() => props.rollDice(d)}
 				/>
 			))}
@@ -49,4 +52,4 @@ const DiceTable: React.SFC<IDiceTableProps> = (props) => (
 		</tfoot>
 	</table>
 )
-export default DiceTable
+export default pure(DiceTable)

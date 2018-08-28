@@ -1,6 +1,6 @@
-import React from 'react'
+import * as React from 'react'
 import { rollDice, sum, tryParseInt } from 'scripts/helpers'
-import { Icon } from 'semantic-ui-react'
+import { Button } from 'semantic-ui-react'
 import DiceTable from './components/DiceTable'
 import Log from './components/Log'
 import './DnD.css'
@@ -13,6 +13,7 @@ export interface ILogEntry {
 	modifier: Modifier
 	modifierNum: number
 	total: number
+	time: Date
 }
 
 export interface IDiceInput {
@@ -64,14 +65,16 @@ export default class DnD extends React.PureComponent<{}, IDnDState> {
 		}
 	}
 	
-	parseInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
-		const inputString = e.target.value
-		const diceSet = parseDnDSet(inputString, this.state.diceSet)
-		this.setState({
-			diceSet: diceSet || this.state.diceSet,
-			formInputs: {
-				...dndSetToInputs(diceSet || this.state.diceSet, this.state.formInputs),
-				search: { input: inputString, inputValidation: diceSet ? '' : 'error' }
+	parseInput: React.FormEventHandler<HTMLInputElement> = (e): void => {
+		const inputString = e.currentTarget.value
+		this.setState((prevState) => {
+			const diceSet = parseDnDSet(inputString, prevState.diceSet)
+			return {
+				diceSet: diceSet || prevState.diceSet,
+				formInputs: {
+					...dndSetToInputs(diceSet || prevState.diceSet, prevState.formInputs),
+					search: { input: inputString, inputValidation: diceSet ? '' : 'error' }
+				}
 			}
 		})
 	}
@@ -79,101 +82,146 @@ export default class DnD extends React.PureComponent<{}, IDnDState> {
 	resetDice = (): void => this.setState({ diceSet: createEmptyDnDSet(), formInputs: dndSetToInputs() })
 
 	changeDiceNum = (sides: string, numString: string) => {
-		const num = tryParseInt(numString)
-		if (!isNaN(num) && num >= 0) {
-			const newDnDSet = {
-				...this.state.diceSet,
-				[sides]: {
-					...this.state.diceSet[sides],
-					diceNum: num,
+		this.setState((prevState) => {
+			const num = tryParseInt(numString)
+			if (!isNaN(num) && num >= 0) {
+				const newDnDSet = {
+					...prevState.diceSet,
+					[sides]: {
+						...prevState.diceSet[sides],
+						diceNum: num,
+					}
+				}
+				return {
+					diceSet: newDnDSet,
+					formInputs: dndSetToInputs(newDnDSet, prevState.formInputs)
 				}
 			}
-			this.setState({ diceSet: newDnDSet, formInputs: dndSetToInputs(newDnDSet, this.state.formInputs) })
-		} else {
-			this.setState({
+
+			return {
+				...prevState,
 				formInputs: {
-					...this.state.formInputs,
+					...prevState.formInputs,
 					[sides]: {
-						...this.state.formInputs[sides],
+						...prevState.formInputs[sides],
 						number: numString,
 						numberValidation: 'error'
 					}
 				}
-			})
-		}
+			}
+		})
 	}
 
 	changeModifier = (sides: string, modifier: string) => {
-		const newDnDSet = {
-			...this.state.diceSet,
-			[sides]: {
-				...this.state.diceSet[sides],
-				modifier,
+		this.setState((prevState) => {
+			const newDnDSet = {
+				...prevState.diceSet,
+				[sides]: {
+					...prevState.diceSet[sides],
+					modifier,
+				}
 			}
-		}
-		this.setState({ diceSet: newDnDSet, formInputs: dndSetToInputs(newDnDSet) })
+
+			return {
+				diceSet: newDnDSet,
+				formInputs: dndSetToInputs(newDnDSet)
+			}
+		})
 	}
 
 	changeModifierNum = (sides: string, numString: string) => {
-		const num = tryParseInt(numString)
-		if (!isNaN(num)) {
-			const newDnDSet = {
-				...this.state.diceSet,
-				[sides]: {
-					...this.state.diceSet[sides],
-					modifierNum: num,
+		this.setState((prevState) => {
+			const num = tryParseInt(numString)
+			if (!isNaN(num)) {
+				const newDnDSet: IDnDSet = {
+					...prevState.diceSet,
+					[sides]: {
+						...prevState.diceSet[sides],
+						modifierNum: num,
+					}
+				}
+				return {
+					diceSet: newDnDSet,
+					formInputs: dndSetToInputs(newDnDSet)
 				}
 			}
-			this.setState({ diceSet: newDnDSet, formInputs: dndSetToInputs(newDnDSet) })
-		} else {
-			this.setState({
+			
+			return {
+				...prevState,
 				formInputs: {
-					...this.state.formInputs,
+					...prevState.formInputs,
 					[sides]: {
-						...this.state.formInputs[sides],
+						...prevState.formInputs[sides],
 						modifierNum: numString,
 						modifierNumValidation: 'error'
 					}
 				}
-			})
-		}
+			}
+		})
 	}
 
 	rollDice = (sides: string) => {
-		const dndDice: IDnDDice = this.state.diceSet[sides]
-		const diceSet = rollDice(dndDice.diceNum, parseInt(sides, 10))
-		let total: number = sum(diceSet)
-		switch (dndDice.modifier) {
-			case '+':
-				total += dndDice.modifierNum
-				break
-			case '-':
-				total -= dndDice.modifierNum
-				break
-			case '*':
-				total *= dndDice.modifierNum
-				break
-			case '/':
-				total = Math.floor(total/dndDice.modifierNum)
-				break
-		}
+		this.setState((prevState) => {
+			const dndDice: IDnDDice = prevState.diceSet[sides]
+			const diceSet = rollDice(dndDice.diceNum, parseInt(sides, 10))
+			let total: number = sum(diceSet)
+			switch (dndDice.modifier) {
+				case '+':
+					total += dndDice.modifierNum
+					break
+				case '-':
+					total -= dndDice.modifierNum
+					break
+				case '*':
+					total *= dndDice.modifierNum
+					break
+				case '/':
+					total = Math.floor(total / dndDice.modifierNum)
+					break
+			}
 
-		const formInputs = {
-			...this.state.formInputs,
-			[sides]: {
-				...this.state.formInputs[sides],
-				result: total.toString()
+			const formInputs = {
+				...prevState.formInputs,
+				[sides]: {
+					...prevState.formInputs[sides],
+					result: total.toString()
+				}
+			}
+			const logEntry: ILogEntry = {
+				diceSet,
+				modifier: dndDice.modifier,
+				modifierNum: dndDice.modifierNum,
+				sides: tryParseInt(sides),
+				time: new Date(),
+				total,
+			}
+			const rollLog = [...prevState.rollLog, logEntry]
+
+			return { formInputs, rollLog }
+		})
+	}
+
+	rollAllDice = () => {
+		Object.keys(this.state.diceSet).forEach((sides) => {
+			const dndDice: IDnDDice = this.state.diceSet[sides]
+			if (dndDice.diceNum > 0 || dndDice.modifierNum !== 0) {
+				this.rollDice(sides)
+			}
+		})
+	}
+
+	onEnter: React.KeyboardEventHandler = (e, sides?: string) => {
+		if (e.key === 'Enter') {
+			if (sides) {
+				this.rollDice(sides)
+			} else {
+				this.rollAllDice()
 			}
 		}
-		const logEntry: ILogEntry = {
-			diceSet,
-			modifier: dndDice.modifier,
-			modifierNum: dndDice.modifierNum,
-			sides: tryParseInt(sides),
-			total,
-		}
-		const rollLog = [...this.state.rollLog, logEntry]
-		this.setState({ formInputs, rollLog })
+	}
+
+	resetLog = () => {
+		this.setState({ rollLog: [] })
 	}
 
 	render() {
@@ -187,19 +235,21 @@ export default class DnD extends React.PureComponent<{}, IDnDState> {
 							onChange={this.parseInput}
 							value={formInputs.search.input}
 							placeholder="2d20 d6+5 ..."
+							onKeyPress={this.onEnter}
 						/>
-						<Icon name="search" className="dice-input-icon"/>
+						<Button primary onClick={this.rollAllDice} className="roll-all-button">Roll</Button>
 					</div>
 					<DiceTable
-						dndInputs={formInputs}
 						changeDiceNum={this.changeDiceNum}
 						changeModifier={this.changeModifier}
 						changeModifierNum={this.changeModifierNum}
+						dndInputs={formInputs}
+						onEnter={this.onEnter}
 						rollDice={this.rollDice}
 						resetDice={this.resetDice}
 					/>
 				</div>
-				<div className="dnd-log"><Log rollLog={rollLog}/></div>
+				<div className="dnd-log"><Log rollLog={rollLog} resetLog={this.resetLog} /></div>
 			</div>
 		)
 	}
